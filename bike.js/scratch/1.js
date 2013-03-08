@@ -1,5 +1,7 @@
 //some music http://ozzed.net/music/
 
+console.log(jQuery(window).width());
+console.log(jQuery(document).width());
 var canvas = document.getElementById('game_canvas');
 var ctx = canvas.getContext('2d');
 var b2Vec2 = Box2D.Common.Math.b2Vec2;
@@ -27,6 +29,11 @@ var MAX_TURBO = 12;
 
 var MIN_ANGLE = -0.8;
 var MAX_ANGLE = 0.8;
+
+function onResize() {
+	canvas.width = canvas.style.width = jQuery(window).width();
+	canvas.height = canvas.style.height = 600;
+}
 
 function makeBody(world, options) {
 	options = options || {};
@@ -407,4 +414,7 @@ function render()
 	//console.log(base.GetAngle());
 	//console.log(bike_in_air);
 }
+
+jQuery(window).resize(onResize);
+onResize();
 render();
