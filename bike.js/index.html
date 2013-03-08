@@ -7,7 +7,10 @@
 	</head>
 	<body>
 
-		<div><canvas id='game_canvas'></canvas></div>
+		<div id='intro-screen' class='screen'></div>
+		<div id='race-screen' class='screen'><canvas id='game_canvas'></canvas></div>
+		<div id='pause-screen' class='screen'></div>
+		<div id='results-screen' class='screen'></div>
 
 		<!-- 3rd party sources -->
 		<script type='text/javascript' src='vendor/cs255/core.js'></script>
@@ -15,7 +18,7 @@
 		<script type='text/javascript' src='vendor/box2dweb/box2d.js'></script>
 		<script type='text/javascript' src='vendor/threex.js/requestanimationframe.js'></script>
 		<script type='text/javascript' src='vendor/threex.js/keyboardstate.js'></script>
-		<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+		<script type='text/javascript' src='vendor/jquery/jquery.min.js'></script>
 
 		<!-- source files -->
 

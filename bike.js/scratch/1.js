@@ -18,6 +18,8 @@ var b2RevoluteJoint = Box2D.Dynamics.Joints.b2RevoluteJoint;
 var b2PrismaticJoint = Box2D.Dynamics.Joints.b2PrismaticJoint;
 var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
+var update_frequecy = 1/60;
+
 var gravity = new b2Vec2(0,9.8);
 var world = new b2World(gravity,true);
 var input = new THREEx.KeyboardState();
@@ -29,6 +31,13 @@ var MAX_TURBO = 12;
 
 var MIN_ANGLE = -0.8;
 var MAX_ANGLE = 0.8;
+
+var logging = false;
+function clog(message) {
+	if (logging) {
+		console.log(message);
+	}
+}
 
 function onResize() {
 	canvas.width = canvas.style.width = jQuery(window).width();
@@ -79,21 +88,21 @@ var bike_in_air = true;
 
 var listener = new Box2D.Dynamics.b2ContactListener;
 listener.BeginContact = function(contact) {
-	console.log('start');
-	//console.log(contact.GetFixtureA().GetBody().GetUserData());
-	//console.log(contact.GetFixtureB().GetBody().GetUserData());
-	console.log(contact.GetFixtureA().GetFilterData().groupIndex);
-	//console.log(contact.GetFixtureB().GetFilterData().groupIndex);
+	clog('start');
+	//clog(contact.GetFixtureA().GetBody().GetUserData());
+	//clog(contact.GetFixtureB().GetBody().GetUserData());
+	clog(contact.GetFixtureA().GetFilterData().groupIndex);
+	//clog(contact.GetFixtureB().GetFilterData().groupIndex);
 	if (contact.GetFixtureA().GetFilterData().groupIndex = 2) {
 		bike_in_air = false;
 	}
 }
 listener.EndContact = function(contact) {
-	console.log('end');
-	//console.log(contact.GetFixtureA().GetBody().GetUserData());
-	//console.log(contact.GetFixtureB().GetBody().GetUserData());
-	console.log(contact.GetFixtureA().GetFilterData().groupIndex);
-	//console.log(contact.GetFixtureB().GetFilterData().groupIndex);
+	clog('end');
+	//clog(contact.GetFixtureA().GetBody().GetUserData());
+	//clog(contact.GetFixtureB().GetBody().GetUserData());
+	clog(contact.GetFixtureA().GetFilterData().groupIndex);
+	//clog(contact.GetFixtureB().GetFilterData().groupIndex);
 	if (contact.GetFixtureA().GetFilterData().groupIndex = 2) {
 		bike_in_air = true;
 	}
@@ -271,7 +280,13 @@ var base = makeBody(world, {
 	x: 5,
 	y: 13,
 	width: 3,
-	height: 0.6,
+	height: 0.9,
+	/*points: [
+		new b2Vec2(-1.5, 0.3),
+		new b2Vec2(1.5, 0.3),
+		new b2Vec2(1.5,-0.3),
+		new b2Vec2(-1.5, -0.3)
+	],*/
 	density: 1,
 	groupIndex: 1,
 	userdata: {
@@ -312,7 +327,7 @@ fwheelJointDef.bodyA = fwheel;
 fwheelJointDef.bodyB = base;
 fwheelJointDef.collideConnected = false;
 fwheelJointDef.localAnchorB.Set(1.5,0);
-fwheelJointDef.enableMotor = false;
+fwheelJointDef.enableMotor = true;
 //fwheelJointDef.maxMotorTorque = 5;
 //fwheelJointDef.motorSpeed = 0;
 var fwheelJoint = world.CreateJoint(fwheelJointDef);
@@ -322,7 +337,7 @@ rwheelJointDef.bodyA = rwheel;
 rwheelJointDef.bodyB = base;
 rwheelJointDef.collideConnected = false;
 rwheelJointDef.localAnchorB.Set(-1.5,0);
-rwheelJointDef.enableMotor = false;
+rwheelJointDef.enableMotor = true;
 //rwheelJointDef.maxMotorTorque = 5;
 //rwheelJointDef.motorSpeed = 0;
 var rwheelJoint = world.CreateJoint(rwheelJointDef);
@@ -355,42 +370,50 @@ function render()
 	if (!bike_in_air) {
 		if (input.pressed('k')) {
 			if (base.GetLinearVelocity().x < MAX_SPEED) {
-				base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
+				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
+				rwheelJoint.SetMotorSpeed(-200 * Math.PI);
+				rwheelJoint.SetMaxMotorTorque(200);
 			}
-			//rwheelJoint.SetMotorSpeed(-200 * Math.PI);
-			//rwheelJoint.SetMaxMotorTorque(200);
+			
 		}
 		else if (input.pressed('l')) {
 			if (base.GetLinearVelocity().x < MAX_TURBO) {
-				base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
+				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
+				rwheelJoint.SetMotorSpeed(-200 * Math.PI);
+				rwheelJoint.SetMaxMotorTorque(300);
 			}
-			//rwheelJoint.SetMotorSpeed(-200 * Math.PI);
-			//rwheelJoint.SetMaxMotorTorque(300);
+			
 		}
 	}
 
 	if (input.pressed('a')) {
 		if (base.GetAngle() > MIN_ANGLE) {
-			base.ApplyImpulse(new b2Vec2(0,-2), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,2), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+			var angle_speed = Math.min((MIN_ANGLE - base.GetAngle()) / MIN_ANGLE, 1);
+			base.ApplyImpulse(new b2Vec2(0,-1 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,1 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() - 0.05);
 		}
 	} else if (input.pressed('d')) {
 		if (base.GetAngle() < MAX_ANGLE) {
-			base.ApplyImpulse(new b2Vec2(0,2), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,-2), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+			var angle_speed = Math.min((MAX_ANGLE - base.GetAngle()) / MAX_ANGLE, 1);
+			base.ApplyImpulse(new b2Vec2(0,1 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,-1 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() + 0.05);
 		}
 	}
 
+	if (input.pressed('p')) {
+		logging = !logging;
+	}
 
+/*
 	if (base.GetAngle() < MIN_ANGLE) {
 		base.SetAngle(MIN_ANGLE);
 	}
 	if (base.GetAngle() > MAX_ANGLE) {
 		base.SetAngle(MAX_ANGLE);
 	}
-
+*/
 	/*if (input.pressed("a")) {
 		rwheelJoint.SetMotorSpeed(15 * Math.PI);
 		fwheelJoint.SetMotorSpeed(15 * Math.PI);
@@ -410,9 +433,9 @@ function render()
 	world.Step(1/60, 10, 10);
 	world.DrawDebugData();
 	window.requestAnimationFrame(render);
-	//console.log(base.GetLinearVelocity().x);
-	//console.log(base.GetAngle());
-	//console.log(bike_in_air);
+	//clog(base.GetLinearVelocity().x);
+	clog(base.GetAngle());
+	//clog(bike_in_air);
 }
 
 jQuery(window).resize(onResize);
