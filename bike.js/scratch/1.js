@@ -26,8 +26,8 @@ var input = new THREEx.KeyboardState();
 
 var debugDraw = new b2DebugDraw();
 
-var MAX_SPEED = 10;
-var MAX_TURBO = 12;
+var MAX_SPEED = 20;
+var MAX_TURBO = 26;
 
 var MIN_ANGLE = -0.8;
 var MAX_ANGLE = 0.8;
@@ -131,7 +131,7 @@ var floor = makeBody(world, {
 		name: 'floor'
 	}
 });
-
+/*
 var ramp1a = makeBody(world, {
 	shape: 'block',
 	type: 'static',
@@ -183,8 +183,8 @@ var ramp1c = makeBody(world, {
 	userdata: {
 		name: 'ramp 1'
 	}
-});
-
+});*/
+/*
 var ramp2a = makeBody(world, {
 	shape: 'block',
 	type: 'static',
@@ -227,7 +227,7 @@ var ramp2c = makeBody(world, {
 	groupIndex: 2,
 	friction: 1,
 	density: 0
-});
+});*/
 
 var ramp3a = makeBody(world, {
 	shape: 'block',
@@ -287,7 +287,7 @@ var base = makeBody(world, {
 		new b2Vec2(1.5,-0.3),
 		new b2Vec2(-1.5, -0.3)
 	],*/
-	density: 1,
+	density: 10,
 	groupIndex: 1,
 	userdata: {
 		name: 'base'
@@ -299,8 +299,8 @@ var rwheel = makeBody(world, {
 	x: 4,
 	y: 15,
 	radius: 1,
-	density: 1,
-	friction: 1,
+	density: 5,
+	friction: 30,
 	restitution: 0,
 	groupIndex: 1,
 	userdata: {
@@ -313,8 +313,8 @@ var fwheel = makeBody(world, {
 	x: 6,
 	y: 15,
 	radius: 1,
-	density: 1,
-	friction: 1,
+	density: 5,
+	friction: 30,
 	restitution: 0,
 	groupIndex: 1,
 	userdata: {
@@ -371,7 +371,7 @@ function render()
 		if (input.pressed('k')) {
 			if (base.GetLinearVelocity().x < MAX_SPEED) {
 				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				rwheelJoint.SetMotorSpeed(-200 * Math.PI);
+				rwheelJoint.SetMotorSpeed(-200);
 				rwheelJoint.SetMaxMotorTorque(200);
 			}
 			
@@ -379,8 +379,8 @@ function render()
 		else if (input.pressed('l')) {
 			if (base.GetLinearVelocity().x < MAX_TURBO) {
 				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				rwheelJoint.SetMotorSpeed(-200 * Math.PI);
-				rwheelJoint.SetMaxMotorTorque(300);
+				rwheelJoint.SetMotorSpeed(-200);
+				rwheelJoint.SetMaxMotorTorque(400);
 			}
 			
 		}
@@ -389,15 +389,15 @@ function render()
 	if (input.pressed('a')) {
 		if (base.GetAngle() > MIN_ANGLE) {
 			var angle_speed = Math.min((MIN_ANGLE - base.GetAngle()) / MIN_ANGLE, 1);
-			base.ApplyImpulse(new b2Vec2(0,-1 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,1 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() - 0.05);
 		}
 	} else if (input.pressed('d')) {
 		if (base.GetAngle() < MAX_ANGLE) {
 			var angle_speed = Math.min((MAX_ANGLE - base.GetAngle()) / MAX_ANGLE, 1);
-			base.ApplyImpulse(new b2Vec2(0,1 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,-1 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() + 0.05);
 		}
 	}
