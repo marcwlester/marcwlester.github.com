@@ -14,7 +14,7 @@ if ( !window.requestAnimationFrame ) {
 		window.oRequestAnimationFrame ||
 		window.msRequestAnimationFrame ||
 		function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
-
+console.log('here');
 			return window.setTimeout( callback, 1000 / 60 );
 
 		};
