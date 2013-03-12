@@ -460,11 +460,25 @@ rwheelJointDef.enableMotor = true;
 //rwheelJointDef.motorSpeed = 0;
 var rwheelJoint = world.CreateJoint(rwheelJointDef);
 
-
+var bike_images = {};
+var bike_red = document.getElementById('bike-red');
+bike_images['red'] = {
+	img: bike_red,
+	width: bike_red.width,
+	height: bike_red.height,
+	half_width: bike_red.width / 2,
+	half_height: bike_red.height / 2
+}
+console.log(bike_images);
 //world.DrawDebugData();
 
 function render()
 {
+	ctx.save();
+	ctx.setTransform(1,0,0,1,0,0);
+	ctx.clearRect(0,0, canvas.width, canvas.height);
+	ctx.restore();
+	
 	rwheelJoint.SetMotorSpeed(0);
 	rwheelJoint.SetMaxMotorTorque(0);
 	//rwheel.GetFixtureList().SetDensity(5);
@@ -567,7 +581,16 @@ function render()
 		head_injury = false;
 	}
 
-	world.DrawDebugData();
+	//world.DrawDebugData();
+	var bike_cx = base.GetPosition().x* world.m_debugDraw.m_drawScale - 50;
+	var bike_cy = base.GetPosition().y* world.m_debugDraw.m_drawScale - 40;
+	var bike_x = bike_cx + bike_images['red'].half_width;
+	var bike_y = bike_cy + bike_images['red'].half_height;
+	ctx.translate(bike_x , bike_y);
+	ctx.rotate(base.GetAngle());
+	ctx.drawImage(bike_images['red'].img, 0 - bike_images['red'].half_width, 0 - bike_images['red'].half_height);
+	ctx.rotate(0 - base.GetAngle());
+	ctx.translate(-bike_x, -bike_y);
 	//var sprite = world.m_debugDraw.m_ctx;
 	//clog(sprite);
 	//var x = base.GetWorldCenter().x;
