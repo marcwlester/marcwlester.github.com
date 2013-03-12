@@ -28,6 +28,7 @@ var Screen = Class.extend({
 
 var Application = Class.extend({
 	_screen: null,
+	_app: null,
 	//_window: window,
 
 	setScreen: function(scr) {
@@ -41,17 +42,18 @@ var Application = Class.extend({
 
 	render: function() {
 		
-		/*if (this._screen != null) {
+		if (this._screen != null) {
 			//console.log(this._screen);
 			this._screen.render(1/60);
-		}*/
-		//window.requestAnimationFrame(this.render);
-		var self = this;
-		window.setTimeout( self.render, 1000 / 60 );
-		console.log(self);
+		}
+		window.requestAnimationFrame(this._app.render);
+		//var self = this;
+		//window.setTimeout( this._app.render, 1000 / 60 );
+		//console.log(self);
 	},
 
-	run: function() {
+	run: function(app) {
+		this._app = app;
 		this.render();
 	}
 });
@@ -75,8 +77,9 @@ var BikeGame = Application.extend({
 });
 
 //var game = new BikeGame();
-//game.run();
+//game.run(game);
 
+/*
 var g_screen = null;
 var input = new THREEx.KeyboardState();
 function setScreen(scr) {
@@ -96,3 +99,4 @@ function render() {
 
 setScreen(IntroScreen);
 render();
+*/

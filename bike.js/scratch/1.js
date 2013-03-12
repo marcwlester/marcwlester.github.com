@@ -84,7 +84,66 @@ function makeBody(world, options) {
 	return body;
 }
 
+function makeBodyEx(world, options) {
+	options = options || {};
+	
+	var def = new b2BodyDef();
+	def.position = new b2Vec2(options.pos.x, options.pos.y);
+	def.type = options.type == 'static' ? b2Body.b2_staticBody : b2Body.b2_dynamicBody;
+	var body = world.CreateBody(def);
+	body.SetUserData(options.userdata || {});
+	//body.m_userData = options.userdata || {};
+
+	options.fixtures = options.fixtures || [];
+	for (var i = 0; i < options.fixtures.length; i++) {
+		var fOptions = options.fixtures[i];
+		var fixture = new b2FixtureDef();
+		fixture.density = fOptions.density || 1;
+		fixture.friction = fOptions.friction || 1;
+		fixture.restitution = fOptions.restitution || 0;
+		fixture.filter.categoryBits = fOptions.categoryBits || 0x0001;
+		fixture.filter.maskBits = fOptions.maskBits || 0xFFFF;
+		fixture.filter.groupIndex = fOptions.groupIndex || 0;
+		//fixture.SetUserData(fOptions.userdata);
+		fOptions.x = fOptions.pos.x || options.pos.x;
+		fOptions.y = fOptions.pos.y || options.pos.y;
+		//console.log(fOptions.x + " : " + options.x);
+		//console.log(fOptions.x || options.x);
+		//console.log(fOptions.y + " : " + options.y);
+		//console.log(fOptions.y || options.y);
+
+		switch (fOptions.shape) {
+			case "circle":
+			fOptions.radius = fOptions.radius || 1;
+			fixture.shape = new b2CircleShape(fOptions.radius);
+			fixture.shape.m_p.Set(fOptions.x, fOptions.y);
+			//fixture.shape.SetLocalPosition(new b2Vec2(fOptions.x, fOptions.y));
+			break;
+			case "polygon":
+			fixture.shape = new b2PolygonShape();
+			fixture.shape.SetAsArray(fOptions.points, fOptions.points.length);
+			break;
+			case "block":
+			fOptions.width = fOptions.width || 1;
+			fOptions.height = fOptions.height || 1;
+			fixture.shape = new b2PolygonShape();
+			
+			fOptions.rotation = fOptions.rotation || 0;
+			fixture.shape.SetAsOrientedBox(fOptions.width / 2, fOptions.height / 2, new b2Vec2(fOptions.x, fOptions.y), fOptions.rotation);			
+			break;
+		}
+
+		//console.log(fOptions);
+
+		var fxtr = body.CreateFixture(fixture);
+		fxtr.SetUserData(fOptions.userdata);
+	}
+
+	return body;
+}
+
 var bike_in_air = true;
+var head_injury = false;
 
 var listener = new Box2D.Dynamics.b2ContactListener;
 listener.BeginContact = function(contact) {
@@ -93,9 +152,13 @@ listener.BeginContact = function(contact) {
 	//clog(contact.GetFixtureB().GetBody().GetUserData());
 	clog(contact.GetFixtureA().GetFilterData().groupIndex);
 	//clog(contact.GetFixtureB().GetFilterData().groupIndex);
-	if (contact.GetFixtureA().GetFilterData().groupIndex = 2) {
+	if (contact.GetFixtureA().GetFilterData().groupIndex == 2) {
 		bike_in_air = false;
 	}
+	if (contact.GetFixtureB().GetFilterData().groupIndex == 4) {
+		head_injury = true;
+	}
+	//console.log(contact.GetFixtureA());
 }
 listener.EndContact = function(contact) {
 	clog('end');
@@ -103,7 +166,7 @@ listener.EndContact = function(contact) {
 	//clog(contact.GetFixtureB().GetBody().GetUserData());
 	clog(contact.GetFixtureA().GetFilterData().groupIndex);
 	//clog(contact.GetFixtureB().GetFilterData().groupIndex);
-	if (contact.GetFixtureA().GetFilterData().groupIndex = 2) {
+	if (contact.GetFixtureA().GetFilterData().groupIndex == 2) {
 		bike_in_air = true;
 	}
 }
@@ -229,6 +292,30 @@ var ramp2c = makeBody(world, {
 	density: 0
 });*/
 
+var ramp3 = makeBodyEx(world, {
+	type: 'static',
+	pos: {x: 31.2+40, y: 19.6},
+	fixtures: [{
+		shape: 'block',
+		groupIndex: 2,
+		friction: 1,
+		density: 0,
+		pos: {x: 0, y: 0},
+		width: 0.6,
+		height: 1.8
+	},{
+		shape: 'block',
+		groupIndex: 2,
+		friction: 1,
+		density: 0,
+		pos: {x: -1.2, y: -0.3},
+		width: 0.7,
+		height: 2.9,
+		rotation: 1,
+	}],
+});
+
+/*
 var ramp3a = makeBody(world, {
 	shape: 'block',
 	type: 'static',
@@ -255,7 +342,7 @@ var ramp3c = makeBody(world, {
 	friction: 1,
 	density: 0
 });
-
+*/
 var ramp4a = makeBody(world, {
 	shape: 'block',
 	type: 'static',
@@ -274,58 +361,88 @@ var ramp4a = makeBody(world, {
 
 
 //var base = null, rwheel = null, fwheel = null, raxle = null, faxle = null;
-var base = makeBody(world, {
+/*var base = makeBody(world, {
 	shape: 'block',
 	type: 'dynamic',
 	x: 5,
 	y: 13,
 	width: 3,
 	height: 0.9,
-	/*points: [
-		new b2Vec2(-1.5, 0.3),
-		new b2Vec2(1.5, 0.3),
-		new b2Vec2(1.5,-0.3),
-		new b2Vec2(-1.5, -0.3)
-	],*/
+	
 	density: 10,
 	groupIndex: 1,
 	userdata: {
 		name: 'base'
 	}
-});
-var rwheel = makeBody(world, {
-	shape: 'circle',
+});*/
+
+var base = makeBodyEx(world, {
 	type: 'dynamic',
-	x: 4,
-	y: 15,
-	radius: 1,
-	density: 5,
-	friction: 30,
-	restitution: 0,
-	groupIndex: 1,
-	userdata: {
-		name: 'rear wheel'
-	}
+	pos: {x: 0, y: 0},
+	fixtures: [{
+		shape: 'block',
+		pos: {x: 0, y: 0},
+		width: 3,
+		height: 1,
+		density: 10,
+		groupIndex: 1,
+		userdata: {
+			name: 'base'
+		}
+	},{
+		shape: 'circle',
+		pos: {x: 0.5, y: -3},
+		radius: 0.75,
+		density: 5,
+		groupIndex: 4,
+		userdata: {
+			name: 'head'
+		}
+	}]
 });
-var fwheel = makeBody(world, {
-	shape: 'circle',
+
+
+var rwheel = makeBodyEx(world, {
 	type: 'dynamic',
-	x: 6,
-	y: 15,
-	radius: 1,
-	density: 5,
-	friction: 30,
-	restitution: 0,
-	groupIndex: 1,
-	userdata: {
-		name: 'front wheel'
-	}
+	pos: {x: 0, y: 0},
+	fixtures: [{
+		shape: 'circle',
+		pos: {x: 0, y: 0},
+		radius: 1,
+		density: 5,
+		friction: 30,
+		restitution: 0.2,
+		groupIndex: 1,
+		userdata: {
+			name: 'rear wheel'
+		}
+	}]
+	
 });
+var fwheel = makeBodyEx(world, {
+	type: 'dynamic',
+	pos: {x: 0, y: 0},
+	fixtures: [{
+		shape: 'circle',
+		pos: {x: 0, y: 0},
+		radius: 1,
+		density: 5,
+		friction: 30,
+		restitution: 0.2,
+		groupIndex: 1,
+		userdata: {
+			name: 'front wheel'
+		}
+	}]
+	
+});
+
 
 var fwheelJointDef = new b2RevoluteJointDef();
 fwheelJointDef.bodyA = fwheel;
 fwheelJointDef.bodyB = base;
 fwheelJointDef.collideConnected = false;
+fwheelJointDef.localAnchorA.Set(0,0);
 fwheelJointDef.localAnchorB.Set(1.5,0);
 fwheelJointDef.enableMotor = true;
 //fwheelJointDef.maxMotorTorque = 5;
@@ -336,37 +453,23 @@ var rwheelJointDef = new b2RevoluteJointDef();
 rwheelJointDef.bodyA = rwheel;
 rwheelJointDef.bodyB = base;
 rwheelJointDef.collideConnected = false;
+fwheelJointDef.localAnchorA.Set(0,0);
 rwheelJointDef.localAnchorB.Set(-1.5,0);
 rwheelJointDef.enableMotor = true;
 //rwheelJointDef.maxMotorTorque = 5;
 //rwheelJointDef.motorSpeed = 0;
 var rwheelJoint = world.CreateJoint(rwheelJointDef);
 
-/*var raxle = makeBody(world, {
-	shape: 'block',
-	type: 'dynamic',
-	x: 0,
-	y: 13,
-	width: 3,
-	height: 0.6,
-	orientation: {
-		position: new b2Vec2(-1 - 0.6*Math.cos(Math.PI/3), -0.3 - 0.6*Math.sin(Math.PI/3)),
-		angle: Math.PI/3
-	}
-});
-*/
-debugDraw.SetSprite(ctx);
-debugDraw.SetDrawScale(17);
-debugDraw.SetFillAlpha(0.3);
-debugDraw.SetLineThickness(1.0);
-debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-world.SetDebugDraw(debugDraw);
+
 //world.DrawDebugData();
 
 function render()
 {
 	rwheelJoint.SetMotorSpeed(0);
 	rwheelJoint.SetMaxMotorTorque(0);
+	//rwheel.GetFixtureList().SetDensity(5);
+	//fwheel.GetFixtureList().SetDensity(5);
+
 	if (!bike_in_air) {
 		if (input.pressed('k')) {
 			if (base.GetLinearVelocity().x < MAX_SPEED) {
@@ -384,6 +487,10 @@ function render()
 			}
 			
 		}
+		else if (input.pressed('space')) {
+			//base.ApplyImpulse(new b2Vec2(50,0), base.GetWorldCenter());
+			//base.SetAngle(0.1);
+		}
 	}
 
 	if (input.pressed('a')) {
@@ -392,6 +499,8 @@ function render()
 			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
 			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() - 0.05);
+			//rwheel.SetDensity(20);
+			//rwheel.GetFixtureList().SetDensity(50);
 		}
 	} else if (input.pressed('d')) {
 		if (base.GetAngle() < MAX_ANGLE) {
@@ -399,8 +508,21 @@ function render()
 			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
 			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() + 0.05);
+			//fwheel.SetDensity(20);
+			//fwheel.GetFixtureList().SetDensity(50);
 		}
 	}
+
+	if (input.pressed('space')) {
+		//base.ApplyImpulse(new b2Vec2(50,0), base.GetWorldCenter());
+		//base.SetAngle(0);
+		base.SetAngularVelocity(0);
+	}
+	//rwheel.ResetMassData();
+	//fwheel.ResetMassData();
+	//console.log(rwheel.GetMass());
+
+	
 
 	if (input.pressed('p')) {
 		logging = !logging;
@@ -431,13 +553,42 @@ function render()
 		fwheelJoint.SetMaxMotorTorque(0);
 	}*/
 	world.Step(1/60, 10, 10);
+
+	if (head_injury) {
+		base.SetLinearVelocity(new b2Vec2(0,0));
+		base.SetAngularVelocity(0);
+		fwheel.SetLinearVelocity(new b2Vec2(0,0));
+		rwheel.SetLinearVelocity(new b2Vec2(0,0));
+		fwheel.SetAngularVelocity(0);
+		rwheel.SetAngularVelocity(0);
+		base.SetPositionAndAngle(new b2Vec2(base.GetPosition().x,0), 0);
+		fwheel.SetPosition(new b2Vec2(fwheel.GetPosition().x,0));
+		rwheel.SetPosition(new b2Vec2(rwheel.GetPosition().x,0));
+		head_injury = false;
+	}
+
 	world.DrawDebugData();
+	//var sprite = world.m_debugDraw.m_ctx;
+	//clog(sprite);
+	//var x = base.GetWorldCenter().x;
+	//var y = base.GetWorldCenter().y;
+	//canvas.width = canvas.width;
+	//var pixelData = sprite.getImageData(x * world.m_debugDraw.m_drawScale - canvas.width / 2, y, canvas.width, canvas.height);
+	//ctx.drawImage(sprite.canvas, x * world.m_debugDraw.m_drawScale - canvas.width / 2, y, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+	//ctx.putImageData(pixelData, 0, 0);
+	world.ClearForces();
 	window.requestAnimationFrame(render);
 	//clog(base.GetLinearVelocity().x);
 	clog(base.GetAngle());
 	//clog(bike_in_air);
 }
 
+debugDraw.SetSprite(ctx);
+debugDraw.SetDrawScale(20);
+debugDraw.SetFillAlpha(0.3);
+debugDraw.SetLineThickness(1.0);
+debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+world.SetDebugDraw(debugDraw);
 jQuery(window).resize(onResize);
 onResize();
 render();
