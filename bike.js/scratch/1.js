@@ -1,5 +1,6 @@
 //some music http://ozzed.net/music/
 
+
 console.log(jQuery(window).width());
 console.log(jQuery(document).width());
 Math.TWOPI = Math.PI * 2;
@@ -523,7 +524,34 @@ bike_images['red'] = {
 	half_height: bike_red.height / 2,
 	x_offset: 0,
 	y_offset: -10
+};
+bike_images['body-red'] = {
+	img: document.getElementById('bike-body-red'),
+	width: document.getElementById('bike-body-red').width,
+	height: document.getElementById('bike-body-red').height,
+	half_width: document.getElementById('bike-body-red').width / 2,
+	half_height: document.getElementById('bike-body-red').height / 2,
+	x_offset: 0,
+	y_offset: -10
+};
+bike_images['wheel'] = {
+	img: document.getElementById('bike-wheel'),
+	width: document.getElementById('bike-wheel').width,
+	height: document.getElementById('bike-wheel').height,
+	half_width: document.getElementById('bike-wheel').width / 2,
+	half_height: document.getElementById('bike-wheel').height / 2
+};
+
+bike_images['ramp-1'] = {
+	img: document.getElementById('ramp-1'),
+	width: document.getElementById('bike-wheel').width,
+	height: document.getElementById('bike-wheel').height,
+	half_width: document.getElementById('bike-wheel').width / 2,
+	half_height: document.getElementById('bike-wheel').height / 2,
+	x_offset: 10,
+	y_offset: -9
 }
+
 var background_img = document.getElementById('img-background');
 console.log(bike_images);
 //world.DrawDebugData();
@@ -574,7 +602,7 @@ function render()
 			//rwheel.SetDensity(20);
 			//rwheel.GetFixtureList().SetDensity(50);
 		}
-	} else if (input.pressed('d')) {
+	} else if (input.pressed('d') && bike_in_air) {
 		if (base.GetAngle() < MAX_ANGLE) {
 			var angle_speed = Math.min((MAX_ANGLE - base.GetAngle()) / MAX_ANGLE, 1);
 			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
@@ -648,6 +676,39 @@ function render()
 	ctx.drawImage(background_img, 0, 0);
 	ctx.drawImage(background_img, 800, 0);
 	ctx.drawImage(background_img, 1600, 0);
+
+	ctx.save();
+	var ramp1_cx = ramp4a.GetPosition().x * world.m_debugDraw.m_drawScale;
+	var ramp1_cy = ramp4a.GetPosition().y * world.m_debugDraw.m_drawScale;
+	ctx.translate(ramp1_cx, ramp1_cy);
+	ctx.drawImage(bike_images['ramp-1'].img, -bike_images['ramp-1'].half_width + bike_images['ramp-1'].x_offset, -bike_images['ramp-1'].half_height + bike_images['ramp-1'].y_offset)
+	ctx.restore();
+
+	ctx.save();
+	var fwheel_cx = (fwheel.GetPosition().x * world.m_debugDraw.m_drawScale);
+	var fwheel_cy = (fwheel.GetPosition().y * world.m_debugDraw.m_drawScale);
+	ctx.translate(fwheel_cx, fwheel_cy);
+	ctx.rotate(fwheel.GetAngle());
+	ctx.drawImage(bike_images['wheel'].img, -bike_images['wheel'].half_width, -bike_images['wheel'].half_height);
+	ctx.restore();
+
+	ctx.save();
+	var rwheel_cx = (rwheel.GetPosition().x * world.m_debugDraw.m_drawScale);
+	var rwheel_cy = (rwheel.GetPosition().y * world.m_debugDraw.m_drawScale);
+	ctx.translate(rwheel_cx, rwheel_cy);
+	ctx.rotate(fwheel.GetAngle());
+	ctx.drawImage(bike_images['wheel'].img, -bike_images['wheel'].half_width, -bike_images['wheel'].half_height);
+	ctx.restore();
+
+	ctx.save();
+	var body_cx = base.GetPosition().x * world.m_debugDraw.m_drawScale;
+	var body_cy = base.GetPosition().y * world.m_debugDraw.m_drawScale;
+	ctx.translate(body_cx, body_cy);
+	ctx.rotate(base.GetAngle());
+	ctx.drawImage(bike_images['body-red'].img, -bike_images['body-red'].half_width + bike_images['body-red'].x_offset, -bike_images['body-red'].half_height + bike_images['body-red'].y_offset)
+	ctx.restore();
+	
+	/*
 	ctx.save();
 	var ctx_scale = world.m_debugDraw.m_drawScale/20;
 	ctx.translate(bike_cx, bike_cy);
@@ -664,6 +725,8 @@ function render()
 	
 	//ctx.translate(-bike_cx, -bike_cy);
 	ctx.restore();
+	*/
+
 	//console.log(base.GetAngle() % (2*Math.PI) * bike_images['red'].half_width);
 	//console.log(base.GetAngle() % Math.PI);
 	//console.log(((base.GetAngle() % (2*Math.PI)) / (2*Math.PI)));
