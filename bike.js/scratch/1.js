@@ -2,6 +2,7 @@
 
 console.log(jQuery(window).width());
 console.log(jQuery(document).width());
+Math.TWOPI = Math.PI * 2;
 var canvas = document.getElementById('game_canvas');
 var ctx = canvas.getContext('2d');
 var b2Vec2 = Box2D.Common.Math.b2Vec2;
@@ -79,7 +80,8 @@ function makeBody(world, options) {
 		break;
 	}
 
-	body.CreateFixture(fixture);
+	var fxtr = body.CreateFixture(fixture);
+	fxtr.SetUserData(options.userdata);
 
 	return body;
 }
@@ -105,8 +107,8 @@ function makeBodyEx(world, options) {
 		fixture.filter.maskBits = fOptions.maskBits || 0xFFFF;
 		fixture.filter.groupIndex = fOptions.groupIndex || 0;
 		//fixture.SetUserData(fOptions.userdata);
-		fOptions.x = fOptions.pos.x || options.pos.x;
-		fOptions.y = fOptions.pos.y || options.pos.y;
+		//fOptions.x = typeof fOptions.pos.x === 'undefined' || options.pos.x;
+		//fOptions.y = fOptions.pos.y || options.pos.y;
 		//console.log(fOptions.x + " : " + options.x);
 		//console.log(fOptions.x || options.x);
 		//console.log(fOptions.y + " : " + options.y);
@@ -116,7 +118,7 @@ function makeBodyEx(world, options) {
 			case "circle":
 			fOptions.radius = fOptions.radius || 1;
 			fixture.shape = new b2CircleShape(fOptions.radius);
-			fixture.shape.m_p.Set(fOptions.x, fOptions.y);
+			fixture.shape.m_p.Set(fOptions.pos.x, fOptions.pos.y);
 			//fixture.shape.SetLocalPosition(new b2Vec2(fOptions.x, fOptions.y));
 			break;
 			case "polygon":
@@ -129,7 +131,7 @@ function makeBodyEx(world, options) {
 			fixture.shape = new b2PolygonShape();
 			
 			fOptions.rotation = fOptions.rotation || 0;
-			fixture.shape.SetAsOrientedBox(fOptions.width / 2, fOptions.height / 2, new b2Vec2(fOptions.x, fOptions.y), fOptions.rotation);			
+			fixture.shape.SetAsOrientedBox(fOptions.width / 2, fOptions.height / 2, new b2Vec2(fOptions.pos.x, fOptions.pos.y), fOptions.rotation);			
 			break;
 		}
 
@@ -153,10 +155,28 @@ listener.BeginContact = function(contact) {
 	clog(contact.GetFixtureA().GetFilterData().groupIndex);
 	//clog(contact.GetFixtureB().GetFilterData().groupIndex);
 	if (contact.GetFixtureA().GetFilterData().groupIndex == 2) {
-		bike_in_air = false;
+		//bike_in_air = false;
 	}
 	if (contact.GetFixtureB().GetFilterData().groupIndex == 4) {
 		head_injury = true;
+	}
+	if (contact.GetFixtureA().GetFilterData().groupIndex == 7) {
+		//console.log('rear begin A');
+	}
+	if (contact.GetFixtureB().GetFilterData().groupIndex == 7) {
+		//console.log('rear begin B');
+		var contactId = contact.GetFixtureA().GetUserData().id;
+		if (!contact.GetFixtureB().GetUserData().contacts) contact.GetFixtureB().GetUserData().contacts = [];
+		var index = contact.GetFixtureB().GetUserData().contacts.indexOf(contactId);
+		//console.log(index);
+		if (index == -1) {
+			contact.GetFixtureB().GetUserData().contacts.push(contactId);
+			bike_in_air = false;
+		}
+
+		//contact.GetFixtureB().userdata.contacts.push(contact.GetFixtureA());
+		
+		//console.log(contact.GetFixtureA().GetUserData());
 	}
 	//console.log(contact.GetFixtureA());
 }
@@ -167,7 +187,26 @@ listener.EndContact = function(contact) {
 	clog(contact.GetFixtureA().GetFilterData().groupIndex);
 	//clog(contact.GetFixtureB().GetFilterData().groupIndex);
 	if (contact.GetFixtureA().GetFilterData().groupIndex == 2) {
-		bike_in_air = true;
+		//bike_in_air = true;
+	}
+
+	if (contact.GetFixtureA().GetFilterData().groupIndex == 7) {
+		//console.log('rear end A');
+	}
+	if (contact.GetFixtureB().GetFilterData().groupIndex == 7) {
+		//console.log('rear end B');
+		var contactId = contact.GetFixtureA().GetUserData().id;
+		if (!contact.GetFixtureB().GetUserData().contacts) contact.GetFixtureB().GetUserData().contacts = [];
+		var index = contact.GetFixtureB().GetUserData().contacts.indexOf(contactId);
+		if (index >= 0) {
+			//console.log(contactId);
+			contact.GetFixtureB().GetUserData().contacts.splice(index, 1);
+			if (contact.GetFixtureB().GetUserData().contacts.length == 0) {
+				bike_in_air = true;
+			}
+		}
+		//console.log(index);
+		//console.log(contact.GetFixtureB().GetUserData().contacts);
 	}
 }
 listener.PostSolve = function(contact, impulse) {
@@ -191,7 +230,8 @@ var floor = makeBody(world, {
 	friction: 1,
 	density: 0,
 	userdata: {
-		name: 'floor'
+		name: 'floor',
+		id: 1
 	}
 });
 /*
@@ -300,9 +340,12 @@ var ramp3 = makeBodyEx(world, {
 		groupIndex: 2,
 		friction: 1,
 		density: 0,
-		pos: {x: 0, y: 0},
+		pos: {x: 0.2, y: -0.4},
 		width: 0.6,
-		height: 1.8
+		height: 2,
+		userdata: {
+			id: 2
+		}
 	},{
 		shape: 'block',
 		groupIndex: 2,
@@ -312,6 +355,9 @@ var ramp3 = makeBodyEx(world, {
 		width: 0.7,
 		height: 2.9,
 		rotation: 1,
+		userdata: {
+			id: 3
+		}
 	}],
 });
 
@@ -356,7 +402,10 @@ var ramp4a = makeBody(world, {
 		angle: -Math.PI/4,
 	},
 	friction: 10,
-	density: 0
+	density: 0,
+	userdata: {
+		id: 4
+	}
 });
 
 
@@ -387,7 +436,8 @@ var base = makeBodyEx(world, {
 		density: 10,
 		groupIndex: 1,
 		userdata: {
-			name: 'base'
+			name: 'base',
+			id: 5,
 		}
 	},{
 		shape: 'circle',
@@ -396,7 +446,8 @@ var base = makeBodyEx(world, {
 		density: 5,
 		groupIndex: 4,
 		userdata: {
-			name: 'head'
+			name: 'head',
+			id: 6,
 		}
 	}]
 });
@@ -412,9 +463,10 @@ var rwheel = makeBodyEx(world, {
 		density: 5,
 		friction: 30,
 		restitution: 0.2,
-		groupIndex: 1,
+		groupIndex: 7,
 		userdata: {
-			name: 'rear wheel'
+			name: 'rear wheel',
+			id: 7,
 		}
 	}]
 	
@@ -428,10 +480,11 @@ var fwheel = makeBodyEx(world, {
 		radius: 1,
 		density: 5,
 		friction: 30,
-		restitution: 0.2,
-		groupIndex: 1,
+		restitution: 0.1,
+		groupIndex: 8,
 		userdata: {
-			name: 'front wheel'
+			name: 'front wheel',
+			id: 8,
 		}
 	}]
 	
@@ -467,8 +520,11 @@ bike_images['red'] = {
 	width: bike_red.width,
 	height: bike_red.height,
 	half_width: bike_red.width / 2,
-	half_height: bike_red.height / 2
+	half_height: bike_red.height / 2,
+	x_offset: 0,
+	y_offset: -10
 }
+var background_img = document.getElementById('img-background');
 console.log(bike_images);
 //world.DrawDebugData();
 
@@ -478,7 +534,7 @@ function render()
 	ctx.setTransform(1,0,0,1,0,0);
 	ctx.clearRect(0,0, canvas.width, canvas.height);
 	ctx.restore();
-	
+
 	rwheelJoint.SetMotorSpeed(0);
 	rwheelJoint.SetMaxMotorTorque(0);
 	//rwheel.GetFixtureList().SetDensity(5);
@@ -505,6 +561,8 @@ function render()
 			//base.ApplyImpulse(new b2Vec2(50,0), base.GetWorldCenter());
 			//base.SetAngle(0.1);
 		}
+	} else {
+		console.log('air time!');
 	}
 
 	if (input.pressed('a')) {
@@ -581,9 +639,35 @@ function render()
 		head_injury = false;
 	}
 
-	//world.DrawDebugData();
-	var bike_cx = base.GetPosition().x* world.m_debugDraw.m_drawScale - 50;
-	var bike_cy = base.GetPosition().y* world.m_debugDraw.m_drawScale - 40;
+	world.DrawDebugData();
+	var bike_cx = (base.GetPosition().x * world.m_debugDraw.m_drawScale) + bike_images['red'].x_offset;
+	var bike_cy = (base.GetPosition().y * world.m_debugDraw.m_drawScale) + bike_images['red'].y_offset;
+	//var bike_x = (bike_cx - bike_images['red'].half_width );// * world.m_debugDraw.m_drawScale;
+	//var bike_y = (bike_cy - bike_images['red'].half_height );// * world.m_debugDraw.m_drawScale;
+	//console.log([bike_x, bike_y]);
+	ctx.drawImage(background_img, 0, 0);
+	ctx.drawImage(background_img, 800, 0);
+	ctx.drawImage(background_img, 1600, 0);
+	ctx.save();
+	var ctx_scale = world.m_debugDraw.m_drawScale/20;
+	ctx.translate(bike_cx, bike_cy);
+	ctx.scale(ctx_scale,ctx_scale);
+	ctx.rotate(base.GetAngle());
+
+	var shw = bike_images['red'].half_width * ctx_scale;
+	var shh = bike_images['red'].half_height * ctx_scale;
+	
+	ctx.drawImage(bike_images['red'].img, 
+		0 - shw + (((base.GetAngle() % (2*Math.PI)) / (2*Math.PI)) * bike_images['red'].half_width), 
+		0 - shh + (((base.GetAngle() % (2*Math.PI)) / (2*Math.PI)) * bike_images['red'].half_height));
+	ctx.rotate(0 - base.GetAngle());
+	
+	//ctx.translate(-bike_cx, -bike_cy);
+	ctx.restore();
+	//console.log(base.GetAngle() % (2*Math.PI) * bike_images['red'].half_width);
+	//console.log(base.GetAngle() % Math.PI);
+	//console.log(((base.GetAngle() % (2*Math.PI)) / (2*Math.PI)));
+/*
 	var bike_x = bike_cx + bike_images['red'].half_width;
 	var bike_y = bike_cy + bike_images['red'].half_height;
 	ctx.translate(bike_x , bike_y);
@@ -591,6 +675,8 @@ function render()
 	ctx.drawImage(bike_images['red'].img, 0 - bike_images['red'].half_width, 0 - bike_images['red'].half_height);
 	ctx.rotate(0 - base.GetAngle());
 	ctx.translate(-bike_x, -bike_y);
+*/	
+
 	//var sprite = world.m_debugDraw.m_ctx;
 	//clog(sprite);
 	//var x = base.GetWorldCenter().x;
