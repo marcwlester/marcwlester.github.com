@@ -2,16 +2,24 @@ var Screen = Class.extend({
 	elementId: null,
 	element: null,
 	app: null,
+	onRender: null,
+	renderCalls: 0,
 
-	init: function(id) {
+	init: function(id, renderCallback) {
 		console.log(id);
 		this.elementId = id;
 		this.element = document.getElementById(id);
 		this.element.style.display = 'none';
+		this.onRender = renderCallback || function(dt) {};
 	},
 
-	render: function(dt, input) {
-
+	render: function(dt) {
+		jQuery(this.element).html('hello ' + this.renderCalls);
+		this.renderCalls++;
+		if (this.app.input.pressed('g')) {
+			this.onRender(dt);
+		}
+		//this.onRender.apply(this, [dt]);
 	},
 
 	show: function() {
@@ -28,7 +36,7 @@ var Screen = Class.extend({
 
 var Application = Class.extend({
 	_screen: null,
-	_app: null,
+	//_app: null,
 	//_window: window,
 
 	setScreen: function(scr) {
@@ -46,38 +54,54 @@ var Application = Class.extend({
 			//console.log(this._screen);
 			this._screen.render(1/60);
 		}
-		window.requestAnimationFrame(this._app.render);
+		window.requestAnimationFrame(this.render.bind(this));
 		//var self = this;
 		//window.setTimeout( this._app.render, 1000 / 60 );
 		//console.log(self);
 	},
 
-	run: function(app) {
-		this._app = app;
+	run: function() {
 		this.render();
 	}
 });
 
 
-var IntroScreen = new Screen('intro-screen');
-IntroScreen.render = function(dt, input) {
+var IntroScreen = new Screen('intro-screen', function(dt) {
 	jQuery(this.element).html('hello');
-	if (input.pressed('g')) {
-		setScreen(RaceScreen);
+	//console.log(this.app);
+	console.log(this.app.input.pressed('g'));
+	if (this.app.input.pressed('g')) {
+		console.log('here');
+		this.app.setScreen(RaceScreen);
+	}
+});
+//jQuery(IntroScreen.element).click(function() {console.log(IntroScreen.app.input);});
+/*
+IntroScreen.render = function(dt) {
+	//console.log(this);
+	jQuery(this.element).html('hello');
+	if (this.input.pressed('g')) {
+		this.app.setScreen(RaceScreen);
 	}
 };
+*/
+//IntroScreen.input = new THREEx.KeyboardState();
 var RaceScreen = new Screen('race-screen');
 var PauseScreen = new Screen('pause-screen');
 var ResultsScreen = new Screen('results-screen');
 
 var BikeGame = Application.extend({
+	input: new THREEx.KeyboardState(),
+
 	init: function() {
 		this.setScreen(IntroScreen);
 	}
 });
 
-//var game = new BikeGame();
-//game.run(game);
+var gInput = new THREEx.KeyboardState();
+
+var game = new BikeGame();
+game.run();
 
 /*
 var g_screen = null;

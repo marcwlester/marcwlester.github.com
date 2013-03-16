@@ -1,0 +1,1 @@
+var BikeGame = Application.extend({});
