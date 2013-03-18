@@ -29,7 +29,7 @@ var input = new THREEx.KeyboardState();
 var debugDraw = new b2DebugDraw();
 
 var MAX_SPEED = 20;
-var MAX_TURBO = 26;
+var MAX_TURBO = 36;
 
 var MIN_ANGLE = -0.8;
 var MAX_ANGLE = 0.8;
@@ -335,7 +335,7 @@ var ramp2c = makeBody(world, {
 
 var ramp3 = makeBodyEx(world, {
 	type: 'static',
-	pos: {x: 31.2+40, y: 19.6},
+	pos: {x: 31.2+120, y: 19.6},
 	fixtures: [{
 		shape: 'block',
 		groupIndex: 2,
@@ -393,7 +393,7 @@ var ramp3c = makeBody(world, {
 var ramp4a = makeBody(world, {
 	shape: 'block',
 	type: 'static',
-	x: 30 - 10,
+	x: 5,
 	y: 20,
 	height: 1,
 	width: 1,
@@ -595,8 +595,8 @@ function render()
 		else if (input.pressed('l')) {
 			if (base.GetLinearVelocity().x < MAX_TURBO) {
 				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				rwheelJoint.SetMotorSpeed(-200);
-				rwheelJoint.SetMaxMotorTorque(400);
+				rwheelJoint.SetMotorSpeed(-400);
+				rwheelJoint.SetMaxMotorTorque(800);
 			}
 			
 		}
@@ -611,8 +611,8 @@ function render()
 	if (input.pressed('a')) {
 		if (base.GetAngle() > MIN_ANGLE) {
 			var angle_speed = Math.min((MIN_ANGLE - base.GetAngle()) / MIN_ANGLE, 1);
-			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,-20 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,20 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() - 0.05);
 			//rwheel.SetDensity(20);
 			//rwheel.GetFixtureList().SetDensity(50);
