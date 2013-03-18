@@ -5,3 +5,10 @@ body {
 #game_canvas {
 	background-color: black;
 }
+
+#screen-intro {
+	width: 800px;
+	height: 600px;
+	margin: 0px auto;
+	background-color: black;
+}
