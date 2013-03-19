@@ -684,62 +684,63 @@ function render()
 
 	world_x_offset = base.GetPosition().x;
 	screen_x_offset = (canvas.width / 3);
-	bg_offset = ((base.GetPosition().x) * world.m_debugDraw.m_drawScale + screen_x_offset) % 800;
+	draw_scale = 20;//world.m_debugDraw.m_drawScale;
+	bg_offset = ((base.GetPosition().x) * draw_scale + screen_x_offset) % 800;
 
 	world.DrawDebugData();
-	var bike_cx = (base.GetPosition().x * world.m_debugDraw.m_drawScale) + bike_images['red'].x_offset;
-	var bike_cy = (base.GetPosition().y * world.m_debugDraw.m_drawScale) + bike_images['red'].y_offset;
-	//var bike_x = (bike_cx - bike_images['red'].half_width );// * world.m_debugDraw.m_drawScale;
-	//var bike_y = (bike_cy - bike_images['red'].half_height );// * world.m_debugDraw.m_drawScale;
+	var bike_cx = (base.GetPosition().x * draw_scale) + bike_images['red'].x_offset;
+	var bike_cy = (base.GetPosition().y * draw_scale) + bike_images['red'].y_offset;
+	//var bike_x = (bike_cx - bike_images['red'].half_width );// * draw_scale;
+	//var bike_y = (bike_cy - bike_images['red'].half_height );// * draw_scale;
 	//console.log([bike_x, bike_y]);
 	for (var i = 0; i < bg_offsets.length; i++) {
 		bg_offsets[i] += 0;
 	}
 	
 	
-	ctx.drawImage(background_img, 0 - bg_offset, 0);
-	ctx.drawImage(background_img, background_img.width - bg_offset, 0);
-	ctx.drawImage(background_img, (background_img.width * 2) - bg_offset, 0);
-	ctx.drawImage(background_img, (background_img.width * 3) - bg_offset, 0);
-	//ctx.drawImage(background_img, (0 - world_x_offset) * world.m_debugDraw.m_drawScale + screen_x_offset - 800 + bg_offset, 0);
-	//ctx.drawImage(background_img, (0 - world_x_offset) * world.m_debugDraw.m_drawScale + screen_x_offset, 0);
-	//ctx.drawImage(background_img, (0 - world_x_offset) * world.m_debugDraw.m_drawScale + screen_x_offset + 800 + bg_offset, 0);
+	//ctx.drawImage(background_img, 0 - bg_offset, 0);
+	//ctx.drawImage(background_img, background_img.width - bg_offset, 0);
+	//ctx.drawImage(background_img, (background_img.width * 2) - bg_offset, 0);
+	//ctx.drawImage(background_img, (background_img.width * 3) - bg_offset, 0);
+	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset - 800 + bg_offset, 0);
+	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset, 0);
+	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset + 800 + bg_offset, 0);
 	//ctx.drawImage(background_img, 800, 0);
 	//ctx.drawImage(background_img, 1600, 0);
 
 	ctx.save();
-	var ramp1_cx = (ramp4a.GetPosition().x - world_x_offset) * world.m_debugDraw.m_drawScale + screen_x_offset;
-	var ramp1_cy = ramp4a.GetPosition().y * world.m_debugDraw.m_drawScale;
+	var ramp1_cx = (ramp4a.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
+	var ramp1_cy = ramp4a.GetPosition().y * draw_scale;
 	ctx.translate(ramp1_cx, ramp1_cy);
 	ctx.drawImage(bike_images['ramp-1'].img, -bike_images['ramp-1'].half_width + bike_images['ramp-1'].x_offset, -bike_images['ramp-1'].half_height + bike_images['ramp-1'].y_offset)
 	ctx.restore();
 
 	ctx.save();
-	var ramp2_cx = (ramp3.GetPosition().x - world_x_offset) * world.m_debugDraw.m_drawScale + screen_x_offset;
-	var ramp2_cy = ramp3.GetPosition().y * world.m_debugDraw.m_drawScale;
+	var ramp2_cx = (ramp3.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
+	var ramp2_cy = ramp3.GetPosition().y * draw_scale;
 	ctx.translate(ramp2_cx, ramp2_cy);
 	ctx.drawImage(bike_images['ramp-2'].img, -bike_images['ramp-2'].half_width + bike_images['ramp-2'].x_offset, -bike_images['ramp-2'].half_height + bike_images['ramp-2'].y_offset)
 	ctx.restore();
 
 	ctx.save();
-	var fwheel_cx = ((fwheel.GetPosition().x - world_x_offset) * world.m_debugDraw.m_drawScale) + screen_x_offset;
-	var fwheel_cy = (fwheel.GetPosition().y * world.m_debugDraw.m_drawScale);
+	var fwheel_cx = ((fwheel.GetPosition().x - world_x_offset) * draw_scale) + screen_x_offset;
+	var fwheel_cy = (fwheel.GetPosition().y * draw_scale);
 	ctx.translate(fwheel_cx, fwheel_cy);
 	ctx.rotate(fwheel.GetAngle());
 	ctx.drawImage(bike_images['wheel'].img, -bike_images['wheel'].half_width, -bike_images['wheel'].half_height);
 	ctx.restore();
 
 	ctx.save();
-	var rwheel_cx = ((rwheel.GetPosition().x - world_x_offset) * world.m_debugDraw.m_drawScale) + screen_x_offset;
-	var rwheel_cy = (rwheel.GetPosition().y * world.m_debugDraw.m_drawScale);
+	var rwheel_cx = ((rwheel.GetPosition().x - world_x_offset) * draw_scale) + screen_x_offset;
+	var rwheel_cy = (rwheel.GetPosition().y * draw_scale);
 	ctx.translate(rwheel_cx, rwheel_cy);
 	ctx.rotate(fwheel.GetAngle());
 	ctx.drawImage(bike_images['wheel'].img, -bike_images['wheel'].half_width, -bike_images['wheel'].half_height);
 	ctx.restore();
 
 	ctx.save();
-	var body_cx = (base.GetPosition().x - world_x_offset) * world.m_debugDraw.m_drawScale + screen_x_offset;
-	var body_cy = base.GetPosition().y * world.m_debugDraw.m_drawScale;
+	var body_cx = (base.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
+	var body_cy = base.GetPosition().y * draw_scale;
 	ctx.translate(body_cx, body_cy);
 	ctx.rotate(base.GetAngle());
 	ctx.drawImage(bike_images['body-red'].img, -bike_images['body-red'].half_width + bike_images['body-red'].x_offset, -bike_images['body-red'].half_height + bike_images['body-red'].y_offset)
@@ -747,7 +748,7 @@ function render()
 	
 	/*
 	ctx.save();
-	var ctx_scale = world.m_debugDraw.m_drawScale/20;
+	var ctx_scale = draw_scale/20;
 	ctx.translate(bike_cx, bike_cy);
 	ctx.scale(ctx_scale,ctx_scale);
 	ctx.rotate(base.GetAngle());
@@ -782,8 +783,8 @@ function render()
 	//var x = base.GetWorldCenter().x;
 	//var y = base.GetWorldCenter().y;
 	//canvas.width = canvas.width;
-	//var pixelData = sprite.getImageData(x * world.m_debugDraw.m_drawScale - canvas.width / 2, y, canvas.width, canvas.height);
-	//ctx.drawImage(sprite.canvas, x * world.m_debugDraw.m_drawScale - canvas.width / 2, y, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+	//var pixelData = sprite.getImageData(x * draw_scale - canvas.width / 2, y, canvas.width, canvas.height);
+	//ctx.drawImage(sprite.canvas, x * draw_scale - canvas.width / 2, y, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 	//ctx.putImageData(pixelData, 0, 0);
 	world.ClearForces();
 	window.requestAnimationFrame(render);
@@ -793,7 +794,7 @@ function render()
 }
 
 debugDraw.SetSprite(ctx);
-debugDraw.SetDrawScale(20);
+debugDraw.SetDrawScale(1);
 debugDraw.SetFillAlpha(0.3);
 debugDraw.SetLineThickness(1.0);
 debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);

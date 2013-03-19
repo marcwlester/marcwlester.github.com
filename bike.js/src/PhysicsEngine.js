@@ -14,8 +14,9 @@ var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 var PhysicsEngine = Class.extend({
 	world: null,
-	init: function(gravity) {
-		gravity = gravity || 9.8;
+	scale: 20,
+	init: function() {
+		gravity = 9.8;
 		this.world = new b2World(new b2Vec2(0,gravity),true);
 
 		var listener = new Box2D.Dynamics.b2ContactListener;
@@ -98,16 +99,90 @@ var PhysicsEngine = Class.extend({
 		}
 
 		return body;
-	}
+	},
 
 	makeBike: function() {},
 	makeWheel: function() {},
 	makeBikeBody: function() {},
-	makeRamp1: function() {},
-	makeRamp2: function() {},
-	makeRamp3: function() {},
-	makeRamp4: function() {},
-	makeTrack: function() {}
+	makeRamp1: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var ramp1 = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				height: 1,
+				width: 1,
+				groupIndex: 2,
+				pos: {x: 0, y: 0},
+				rotation: -Math.PI/4,
+				friction: 10,
+				density: 0,
+				userdata: {
+					id: 1100
+				}
+			}]
+		});
+	},
+	makeRamp2: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var ramp2 = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				pos: {x: 0.2, y: -0.8},
+				width: 0.6,
+				height: 2,
+				userdata: {
+					id: 1200
+				}
+			},{
+				shape: 'block',
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				pos: {x: -1.2, y: -0.7},
+				width: 0.7,
+				height: 2.9,
+				rotation: 1,
+				userdata: {
+					id: 1201
+				}
+			}],
+		});
+	},
+	makeRamp3: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+	},
+	makeRamp4: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+	},
+	makeTrack: function(size, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var track = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: size / 2, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				height: 0.5,
+				width: size,
+				pos: {x: 0, y: 0},
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1000
+				}
+			}]
+		});
+	},
+	getTrackYOffset: function(tracknum) {
+		return 20 + ((tracknum - 1) * 10);
+	}
 });
 
 var gPhysicsEngine = new PhysicsEngine();

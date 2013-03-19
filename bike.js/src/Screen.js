@@ -5,7 +5,7 @@ var Screen = Class.extend({
 	keyBindings: {},
 
 	init: function(id) {
-		console.log(id);
+		//console.log(id);
 		this.elementId = id;
 		this.element = document.getElementById(id);
 		this.element.style.display = 'none';
@@ -13,13 +13,18 @@ var Screen = Class.extend({
 
 	render: function(dt) {},
 
+	resize: function() {},
+
 	show: function() {
 		this.element.style.display = 'block';
+		this.element.focus();
 		gInputEngine.attach(this);
+		this.resize();
 		//gInputEngine.applyBindMap(this.keyBindings);
 	},
 	hide: function() {
 		this.element.style.display = 'none';
+		this.element.blur();
 		gInputEngine.detach(this);
 	},
 
