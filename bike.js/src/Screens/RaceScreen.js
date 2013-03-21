@@ -11,6 +11,9 @@ var RaceScreen = Screen.extend({
 	ctx: null,
 	debugDraw: null,
 
+	MAX_DRIVE: 20,
+	MAX_OVERDRIVE: 36,
+
 	init: function(id) {
 		//console.log(this.parent);
 		this.parent(id);
@@ -27,9 +30,35 @@ var RaceScreen = Screen.extend({
 	},
 
 	render: function(dt) {
-		//this.clearScreen();
+		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
+		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(0);
+		if (gInputEngine.action('drive')) {
+			if (gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x < this.MAX_DRIVE) {
+				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-200);
+				gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(200);
+			}
+		} else if (gInputEngine.action('over-drive')) {
+			if (gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x < this.MAX_OVERDRIVE) {
+				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-400);
+				gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(800);
+			}
+		}
+
+		if (gInputEngine.action('lean-back')) {
+			console.log('back');
+			var angle_speed = 0.1;
+			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
+			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x - 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
+		} else if (gInputEngine.action('lean-forward')) {
+			console.log('forward');
+			var angle_speed = 1;
+			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
+		}
+
+		this.clearScreen();
 		gPhysicsEngine.world.Step(1/60, 10, 10);
 		gPhysicsEngine.world.DrawDebugData();
+		gRenderEngine.render(this.ctx, (this.canvas.width / 3), 100);
 		gPhysicsEngine.world.ClearForces();
 	},
 
@@ -53,6 +82,7 @@ var RaceScreen = Screen.extend({
 			var tdata = JSON.parse(data);
 			gPhysicsEngine.init();
 			gPhysicsEngine.makeTrack(tdata.size, 1);
+			gPhysicsEngine.makeBike(5, 1);
 			for (var i = 0; i < tdata.track.length; i++) {
 				var pos = tdata.track[i].pos;
 				switch(tdata.track[i].type) {

@@ -43,7 +43,7 @@ function clog(message) {
 
 function onResize() {
 	canvas.width = canvas.style.width = jQuery(window).width();
-	canvas.height = canvas.style.height = 600;
+	canvas.height = canvas.style.height = 800;
 }
 
 function makeBody(world, options) {
@@ -223,7 +223,7 @@ world.SetContactListener(listener);
 var floor = makeBody(world, {
 	shape: 'block',
 	type: 'static',
-	x: 30,
+	x: 480,
 	y: 20,
 	height: 0.5,
 	width: 1000,
@@ -568,6 +568,7 @@ var background_img = document.getElementById('img-background');
 var world_x_offset = base.GetPosition().x;
 console.log((canvas.width));
 var screen_x_offset = 500;//- (canvas.width / 2);
+var screen_y_offset = 100;
 var bg_offsets = [0, background_img.width, background_img.width * 2, background_img.width * 3];
 var bg_offset = 0;
 
@@ -609,23 +610,25 @@ function render()
 	}
 
 	if (input.pressed('a')) {
-		if (base.GetAngle() > MIN_ANGLE) {
-			var angle_speed = Math.min((MIN_ANGLE - base.GetAngle()) / MIN_ANGLE, 1);
-			base.ApplyImpulse(new b2Vec2(0,-20 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,20 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+		//if (base.GetAngle() % (Math.PI * 2) > MIN_ANGLE) {
+			//var angle_speed = Math.min((MIN_ANGLE - base.GetAngle()) / MIN_ANGLE, 1);
+			var angle_speed = 0.1;
+			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
+			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() - 0.05);
 			//rwheel.SetDensity(20);
 			//rwheel.GetFixtureList().SetDensity(50);
-		}
-	} else if (input.pressed('d') && bike_in_air) {
-		if (base.GetAngle() < MAX_ANGLE) {
-			var angle_speed = Math.min((MAX_ANGLE - base.GetAngle()) / MAX_ANGLE, 1);
+		//}
+	} else if (input.pressed('d')/* && bike_in_air*/) {
+		//if (base.GetAngle() % (Math.PI * 2) < MAX_ANGLE) {
+			//var angle_speed = Math.min((MAX_ANGLE - base.GetAngle()) / MAX_ANGLE, 1);
+			var angle_speed = 1;
 			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
-			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
+			//base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() + 0.05);
 			//fwheel.SetDensity(20);
 			//fwheel.GetFixtureList().SetDensity(50);
-		}
+		//}
 	}
 
 	if (input.pressed('space')) {
@@ -698,10 +701,10 @@ function render()
 	}
 	
 	
-	//ctx.drawImage(background_img, 0 - bg_offset, 0);
-	//ctx.drawImage(background_img, background_img.width - bg_offset, 0);
-	//ctx.drawImage(background_img, (background_img.width * 2) - bg_offset, 0);
-	//ctx.drawImage(background_img, (background_img.width * 3) - bg_offset, 0);
+	ctx.drawImage(background_img, 0 - bg_offset, 0 + screen_y_offset);
+	ctx.drawImage(background_img, background_img.width - bg_offset, 0 + screen_y_offset);
+	ctx.drawImage(background_img, (background_img.width * 2) - bg_offset, 0 + screen_y_offset);
+	ctx.drawImage(background_img, (background_img.width * 3) - bg_offset, 0 + screen_y_offset);
 	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset - 800 + bg_offset, 0);
 	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset, 0);
 	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset + 800 + bg_offset, 0);
@@ -710,21 +713,21 @@ function render()
 
 	ctx.save();
 	var ramp1_cx = (ramp4a.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
-	var ramp1_cy = ramp4a.GetPosition().y * draw_scale;
+	var ramp1_cy = ramp4a.GetPosition().y * draw_scale + screen_y_offset;
 	ctx.translate(ramp1_cx, ramp1_cy);
 	ctx.drawImage(bike_images['ramp-1'].img, -bike_images['ramp-1'].half_width + bike_images['ramp-1'].x_offset, -bike_images['ramp-1'].half_height + bike_images['ramp-1'].y_offset)
 	ctx.restore();
 
 	ctx.save();
 	var ramp2_cx = (ramp3.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
-	var ramp2_cy = ramp3.GetPosition().y * draw_scale;
+	var ramp2_cy = ramp3.GetPosition().y * draw_scale + screen_y_offset;
 	ctx.translate(ramp2_cx, ramp2_cy);
 	ctx.drawImage(bike_images['ramp-2'].img, -bike_images['ramp-2'].half_width + bike_images['ramp-2'].x_offset, -bike_images['ramp-2'].half_height + bike_images['ramp-2'].y_offset)
 	ctx.restore();
 
 	ctx.save();
 	var fwheel_cx = ((fwheel.GetPosition().x - world_x_offset) * draw_scale) + screen_x_offset;
-	var fwheel_cy = (fwheel.GetPosition().y * draw_scale);
+	var fwheel_cy = (fwheel.GetPosition().y * draw_scale) + screen_y_offset;
 	ctx.translate(fwheel_cx, fwheel_cy);
 	ctx.rotate(fwheel.GetAngle());
 	ctx.drawImage(bike_images['wheel'].img, -bike_images['wheel'].half_width, -bike_images['wheel'].half_height);
@@ -732,7 +735,7 @@ function render()
 
 	ctx.save();
 	var rwheel_cx = ((rwheel.GetPosition().x - world_x_offset) * draw_scale) + screen_x_offset;
-	var rwheel_cy = (rwheel.GetPosition().y * draw_scale);
+	var rwheel_cy = (rwheel.GetPosition().y * draw_scale) + screen_y_offset;
 	ctx.translate(rwheel_cx, rwheel_cy);
 	ctx.rotate(fwheel.GetAngle());
 	ctx.drawImage(bike_images['wheel'].img, -bike_images['wheel'].half_width, -bike_images['wheel'].half_height);
@@ -740,7 +743,7 @@ function render()
 
 	ctx.save();
 	var body_cx = (base.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
-	var body_cy = base.GetPosition().y * draw_scale;
+	var body_cy = base.GetPosition().y * draw_scale + screen_y_offset;
 	ctx.translate(body_cx, body_cy);
 	ctx.rotate(base.GetAngle());
 	ctx.drawImage(bike_images['body-red'].img, -bike_images['body-red'].half_width + bike_images['body-red'].x_offset, -bike_images['body-red'].half_height + bike_images['body-red'].y_offset)

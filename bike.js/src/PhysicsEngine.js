@@ -14,7 +14,18 @@ var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 var PhysicsEngine = Class.extend({
 	world: null,
-	scale: 20,
+	scale: 1,
+	bodies: {
+		track: null,
+		bike: {
+			base: null,
+			fwheel: null,
+			rwheel: null,
+			rjoint: null,
+			fjoint: null
+		},
+		ramps: []
+	},
 	init: function() {
 		gravity = 9.8;
 		this.world = new b2World(new b2Vec2(0,gravity),true);
@@ -101,9 +112,82 @@ var PhysicsEngine = Class.extend({
 		return body;
 	},
 
-	makeBike: function() {},
-	makeWheel: function() {},
-	makeBikeBody: function() {},
+	makeBike: function(pos, tracknum) {
+		gPhysicsEngine.bodies.bike.base = gPhysicsEngine.makeBikeBody(pos, tracknum);
+		gPhysicsEngine.bodies.bike.fwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'front', 0.1, 8, 8);
+		gPhysicsEngine.bodies.bike.rwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'back', 0.2, 7, 7);
+
+		var fwheelJointDef = new b2RevoluteJointDef();
+		fwheelJointDef.bodyA = gPhysicsEngine.bodies.bike.fwheel;
+		fwheelJointDef.bodyB = gPhysicsEngine.bodies.bike.base;
+		fwheelJointDef.collideConnected = false;
+		fwheelJointDef.localAnchorA.Set(0,0);
+		fwheelJointDef.localAnchorB.Set(1.5,0);
+		fwheelJointDef.enableMotor = true;
+		gPhysicsEngine.bodies.bike.fjoint = gPhysicsEngine.world.CreateJoint(fwheelJointDef);
+
+
+		var rwheelJointDef = new b2RevoluteJointDef();
+		rwheelJointDef.bodyA = gPhysicsEngine.bodies.bike.rwheel;
+		rwheelJointDef.bodyB = gPhysicsEngine.bodies.bike.base;
+		rwheelJointDef.collideConnected = false;
+		fwheelJointDef.localAnchorA.Set(0,0);
+		rwheelJointDef.localAnchorB.Set(-1.5,0);
+		rwheelJointDef.enableMotor = true;
+		gPhysicsEngine.bodies.bike.rjoint = gPhysicsEngine.world.CreateJoint(rwheelJointDef);
+	},
+	makeWheel: function(pos, tracknum, name, rest, id, index) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var wheel = gPhysicsEngine.makeBody({
+			type: 'dynamic',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'circle',
+				pos: {x: 0, y: 0},
+				radius: 1,
+				density: 5,
+				friction: 30,
+				restitution: rest,
+				groupIndex: index,
+				userdata: {
+					name: name + ' wheel',
+					id: id,
+				}
+			}]
+		});
+
+		return wheel;
+	},
+	makeBikeBody: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var body = gPhysicsEngine.makeBody({
+			type: 'dynamic',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				pos: {x: 0, y: 0},
+				width: 3,
+				height: 1,
+				density: 10,
+				groupIndex: 1,
+				userdata: {
+					name: 'base',
+					id: 5,
+				}
+			},{
+				shape: 'circle',
+				pos: {x: 0.5, y: -3},
+				radius: 0.75,
+				density: 5,
+				groupIndex: 4,
+				userdata: {
+					name: 'head',
+					id: 6,
+				}
+			}]
+		});
+		return body;
+	},
 	makeRamp1: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
 		var ramp1 = gPhysicsEngine.makeBody({
@@ -123,6 +207,7 @@ var PhysicsEngine = Class.extend({
 				}
 			}]
 		});
+		gPhysicsEngine.bodies['ramps'].push(ramp1);
 	},
 	makeRamp2: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
@@ -154,6 +239,7 @@ var PhysicsEngine = Class.extend({
 				}
 			}],
 		});
+		gPhysicsEngine.bodies['ramps'].push(ramp2);
 	},
 	makeRamp3: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
@@ -179,6 +265,7 @@ var PhysicsEngine = Class.extend({
 				}
 			}]
 		});
+		gPhysicsEngine.bodies['track'] = track;
 	},
 	getTrackYOffset: function(tracknum) {
 		return 20 + ((tracknum - 1) * 10);
