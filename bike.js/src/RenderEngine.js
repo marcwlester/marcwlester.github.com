@@ -47,12 +47,26 @@ var RenderEngine = Class.extend({
 			half_width: document.getElementById('ramp-2').width / 2,
 			half_height: document.getElementById('ramp-2').height / 2,
 			x_offset: -18,
-			y_offset: -12
+			y_offset: -20
 		}
 	},
 
 	render: function(ctx, x, y) {
 		this.renderBg(ctx, x, y);
+		
+		var ramps = gPhysicsEngine.bodies.ramps;
+		for (var i = 0; i < ramps.length; i++) {
+			var name = ramps[i].GetUserData().name;
+			switch (name) {
+				case "ramp1":
+				this.renderRamp1(ctx, x, y, ramps[i]);
+				break;
+				case "ramp2":
+				this.renderRamp2(ctx, x, y, ramps[i]);
+				break;
+			}
+		}
+
 		this.renderFrontWheel(ctx, x, y);
 		this.renderRearWheel(ctx, x, y);
 		this.renderBike(ctx, x, y);
@@ -114,16 +128,27 @@ var RenderEngine = Class.extend({
 	},
 
 	renderRamp1: function(ctx, x, y, ramp) {
-		var ramp1_cx = (ramp4a.GetPosition().x - world_x_offset) * draw_scale + screen_x_offset;
-		var ramp1_cy = ramp4a.GetPosition().y * draw_scale + screen_y_offset;
+		var pos = ramp.GetPosition();
+		var offset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
+		var image = this.images.ramp1;
+		var ramp1_cx = (pos.x - offset) * this.scale + x;
+		var ramp1_cy = pos.y * this.scale + y;
 		ctx.save();
 		ctx.translate(ramp1_cx, ramp1_cy);
-		ctx.drawImage(bike_images['ramp-1'].img, -bike_images['ramp-1'].half_width + bike_images['ramp-1'].x_offset, -bike_images['ramp-1'].half_height + bike_images['ramp-1'].y_offset)
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset)
 		ctx.restore();
 	},
 
-	renderRamp2: function(ctx, x, y) {
-
+	renderRamp2: function(ctx, x, y, ramp) {
+		var pos = ramp.GetPosition();
+		var offset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
+		var image = this.images.ramp2;
+		var ramp1_cx = (pos.x - offset) * this.scale + x;
+		var ramp1_cy = pos.y * this.scale + y;
+		ctx.save();
+		ctx.translate(ramp1_cx, ramp1_cy);
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset)
+		ctx.restore();
 	},
 });
 

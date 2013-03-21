@@ -32,6 +32,11 @@ var RaceScreen = Screen.extend({
 	render: function(dt) {
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
 		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(0);
+		gPhysicsEngine.bodies.bike.fjoint.SetMotorSpeed(0);
+		gPhysicsEngine.bodies.bike.fjoint.SetMaxMotorTorque(0);
+
+		var head_injury = gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury;
+		
 		if (gInputEngine.action('drive')) {
 			if (gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x < this.MAX_DRIVE) {
 				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-200);
@@ -46,7 +51,7 @@ var RaceScreen = Screen.extend({
 
 		if (gInputEngine.action('lean-back')) {
 			console.log('back');
-			var angle_speed = 0.1;
+			var angle_speed = 1;
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x - 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		} else if (gInputEngine.action('lean-forward')) {
@@ -57,6 +62,20 @@ var RaceScreen = Screen.extend({
 
 		this.clearScreen();
 		gPhysicsEngine.world.Step(1/60, 10, 10);
+
+		if (head_injury) {
+			gPhysicsEngine.bodies.bike.base.SetLinearVelocity(new b2Vec2(0,0));
+			gPhysicsEngine.bodies.bike.base.SetAngularVelocity(0);
+			gPhysicsEngine.bodies.bike.fwheel.SetLinearVelocity(new b2Vec2(0,0));
+			gPhysicsEngine.bodies.bike.rwheel.SetLinearVelocity(new b2Vec2(0,0));
+			gPhysicsEngine.bodies.bike.fwheel.SetAngularVelocity(0);
+			gPhysicsEngine.bodies.bike.rwheel.SetAngularVelocity(0);
+			gPhysicsEngine.bodies.bike.base.SetPositionAndAngle(new b2Vec2(gPhysicsEngine.bodies.bike.base.GetPosition().x,0), 0);
+			gPhysicsEngine.bodies.bike.fwheel.SetPosition(new b2Vec2(gPhysicsEngine.bodies.bike.fwheel.GetPosition().x,0));
+			gPhysicsEngine.bodies.bike.rwheel.SetPosition(new b2Vec2(gPhysicsEngine.bodies.bike.rwheel.GetPosition().x,0));
+			gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury = false;
+		}
+
 		gPhysicsEngine.world.DrawDebugData();
 		gRenderEngine.render(this.ctx, (this.canvas.width / 3), 100);
 		gPhysicsEngine.world.ClearForces();

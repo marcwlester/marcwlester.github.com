@@ -14,7 +14,7 @@ var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 var PhysicsEngine = Class.extend({
 	world: null,
-	scale: 1,
+	scale: 2,
 	bodies: {
 		track: null,
 		bike: {
@@ -114,8 +114,8 @@ var PhysicsEngine = Class.extend({
 
 	makeBike: function(pos, tracknum) {
 		gPhysicsEngine.bodies.bike.base = gPhysicsEngine.makeBikeBody(pos, tracknum);
-		gPhysicsEngine.bodies.bike.fwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'front', 0.1, 8, 8);
-		gPhysicsEngine.bodies.bike.rwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'back', 0.2, 7, 7);
+		gPhysicsEngine.bodies.bike.fwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'front', 0.5, 8, 8);
+		gPhysicsEngine.bodies.bike.rwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'back', 0.5, 7, 7);
 
 		var fwheelJointDef = new b2RevoluteJointDef();
 		fwheelJointDef.bodyA = gPhysicsEngine.bodies.bike.fwheel;
@@ -145,7 +145,7 @@ var PhysicsEngine = Class.extend({
 				shape: 'circle',
 				pos: {x: 0, y: 0},
 				radius: 1,
-				density: 5,
+				density: 2,
 				friction: 30,
 				restitution: rest,
 				groupIndex: index,
@@ -168,7 +168,7 @@ var PhysicsEngine = Class.extend({
 				pos: {x: 0, y: 0},
 				width: 3,
 				height: 1,
-				density: 10,
+				density: 20,
 				groupIndex: 1,
 				userdata: {
 					name: 'base',
@@ -205,7 +205,10 @@ var PhysicsEngine = Class.extend({
 				userdata: {
 					id: 1100
 				}
-			}]
+			}],
+			userdata: {
+				name: 'ramp1'
+			}
 		});
 		gPhysicsEngine.bodies['ramps'].push(ramp1);
 	},
@@ -238,6 +241,9 @@ var PhysicsEngine = Class.extend({
 					id: 1201
 				}
 			}],
+			userdata: {
+				name: 'ramp2'
+			}
 		});
 		gPhysicsEngine.bodies['ramps'].push(ramp2);
 	},

@@ -1,10 +1,10 @@
 {
 	"name": "track 1",
-	"size": 500,
+	"size": 1000,
 	"track": [
-		{"pos": 10,"type": "ramp1"},
-		{"pos": 50,"type": "ramp2"},
 		{"pos": 100,"type": "ramp1"},
-		{"pos": 200,"type": "ramp2"}
+		{"pos": 150,"type": "ramp2"},
+		{"pos": 300,"type": "ramp1"},
+		{"pos": 400,"type": "ramp2"}
 	]
 }
