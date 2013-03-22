@@ -12,7 +12,12 @@ var RaceScreen = Screen.extend({
 	debugDraw: null,
 
 	MAX_DRIVE: 20,
-	MAX_OVERDRIVE: 36,
+	MAX_OVERDRIVE: 28,
+	motorSpeed: 0,
+	motorOn: false,
+	motorStep: 0.05,
+	minTorque: 200,
+	maxTorque: 800,
 
 	init: function(id) {
 		//console.log(this.parent);
@@ -31,31 +36,41 @@ var RaceScreen = Screen.extend({
 
 	render: function(dt) {
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
-		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(0);
+		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.minTorque);
 		gPhysicsEngine.bodies.bike.fjoint.SetMotorSpeed(0);
-		gPhysicsEngine.bodies.bike.fjoint.SetMaxMotorTorque(0);
+		gPhysicsEngine.bodies.bike.fjoint.SetMaxMotorTorque(10);
 
 		var head_injury = gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury;
+		this.motorOn = false;
 		
 		if (gInputEngine.action('drive')) {
+			this.motorOn = true;
 			if (gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x < this.MAX_DRIVE) {
-				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-200);
-				gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(200);
+				this.motorSpeed = Math.min(this.motorSpeed + this.motorStep, this.MAX_DRIVE);
+				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.motorSpeed);
+				
 			}
+			gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.minTorque);
 		} else if (gInputEngine.action('over-drive')) {
+			this.motorOn = true;
 			if (gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x < this.MAX_OVERDRIVE) {
-				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-400);
-				gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(800);
+				this.motorSpeed = Math.min(this.motorSpeed + this.motorStep, this.MAX_OVERDRIVE);
+				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.motorSpeed);
 			}
+			gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.maxTorque);
+		}
+
+		if (!this.motorOn) {
+			this.motorSpeed -= Math.max(this.motorSpeed - this.motorStep, 0);
+			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
+			gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(10);
 		}
 
 		if (gInputEngine.action('lean-back')) {
-			console.log('back');
 			var angle_speed = 1;
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x - 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		} else if (gInputEngine.action('lean-forward')) {
-			console.log('forward');
 			var angle_speed = 1;
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		}

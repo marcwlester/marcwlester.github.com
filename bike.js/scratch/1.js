@@ -571,6 +571,8 @@ var screen_x_offset = 500;//- (canvas.width / 2);
 var screen_y_offset = 100;
 var bg_offsets = [0, background_img.width, background_img.width * 2, background_img.width * 3];
 var bg_offset = 0;
+var motor_speed = 0;
+var motor_on = false;
 
 function render()
 {
@@ -579,26 +581,31 @@ function render()
 	ctx.clearRect(0,0, canvas.width, canvas.height);
 	ctx.restore();
 
-	rwheelJoint.SetMotorSpeed(0);
-	rwheelJoint.SetMaxMotorTorque(0);
+	
 	//rwheel.GetFixtureList().SetDensity(5);
 	//fwheel.GetFixtureList().SetDensity(5);
-
+	motor_on = false;
 	if (!bike_in_air) {
 		if (input.pressed('k')) {
 			if (base.GetLinearVelocity().x < MAX_SPEED) {
 				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				rwheelJoint.SetMotorSpeed(-200);
-				rwheelJoint.SetMaxMotorTorque(200);
+				motor_speed = Math.min(motor_speed + 0.05, 20);
+				rwheelJoint.SetMotorSpeed(-motor_speed);
+				
+				motor_on = true;
 			}
+			rwheelJoint.SetMaxMotorTorque(200);
 			
 		}
 		else if (input.pressed('l')) {
 			if (base.GetLinearVelocity().x < MAX_TURBO) {
+				motor_speed += Math.min(motor_speed + 0.05, 20);
 				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				rwheelJoint.SetMotorSpeed(-400);
-				rwheelJoint.SetMaxMotorTorque(800);
+				rwheelJoint.SetMotorSpeed(-motor_speed);
+				
+				motor_on = true;
 			}
+			rwheelJoint.SetMaxMotorTorque(800);
 			
 		}
 		else if (input.pressed('space')) {
@@ -608,11 +615,16 @@ function render()
 	} else {
 		console.log('air time!');
 	}
+	if (!motor_on) {
+		motor_speed -= Math.max(motor_speed - 0.05, 0);
+		rwheelJoint.SetMotorSpeed(motor_speed);
+		rwheelJoint.SetMaxMotorTorque(200);
+	}
 
 	if (input.pressed('a')) {
 		//if (base.GetAngle() % (Math.PI * 2) > MIN_ANGLE) {
 			//var angle_speed = Math.min((MIN_ANGLE - base.GetAngle()) / MIN_ANGLE, 1);
-			var angle_speed = 0.1;
+			var angle_speed = 1;
 			base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(base.GetWorldCenter().x + 1.5, base.GetWorldCenter().y));
 			base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(base.GetWorldCenter().x - 1.5, base.GetWorldCenter().y));
 			//base.SetAngle(base.GetAngle() - 0.05);
