@@ -1,7 +1,6 @@
 {
 	"name": "track 1",
-	"size": 1000,
-	"end": 900,
+	"end": 1000,
 	"track": [
 		{"pos": 100,"type": "ramp1"},
 		{"pos": 110,"type": "ramp1"},
