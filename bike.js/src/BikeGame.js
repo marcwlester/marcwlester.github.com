@@ -28,6 +28,7 @@ var BikeGame = Class.extend({
 	run: function() {
 		//gInputEngine.setup();
 		//jQuery(window).resize(this.resize.bind(this));
+		gRenderEngine.loadContent();
 		this.setScreen(this.screens['intro']);
 		this.render();
 	}

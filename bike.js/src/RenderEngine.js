@@ -3,49 +3,56 @@ var RenderEngine = Class.extend({
 
 	images: {},
 
-	init: function() {
+	loadContent: function() {
+		var background = gAssetLoader.assets['background'];
 		this.images['background'] = {
-			img: document.getElementById('img-background'),
-			width: document.getElementById('img-background').width,
-			height: document.getElementById('img-background').height,
-			half_width: document.getElementById('img-background').width / 2,
-			half_height: document.getElementById('img-background').height / 2,
+			img: background,
+			width: background.width,
+			height: background.height,
+			half_width: background.width / 2,
+			half_height: background.height / 2,
 			x_offset: 0,
 			y_offset: 0
 		};
 		this.images['bikes'] = {};
+
+		var redbike = gAssetLoader.assets['bike-body-red'];
 		this.images['bikes']['red'] = {
-			img: document.getElementById('bike-body-red'),
-			width: document.getElementById('bike-body-red').width,
-			height: document.getElementById('bike-body-red').height,
-			half_width: document.getElementById('bike-body-red').width / 2,
-			half_height: document.getElementById('bike-body-red').height / 2,
+			img: redbike,
+			width: redbike.width,
+			height: redbike.height,
+			half_width: redbike.width / 2,
+			half_height: redbike.height / 2,
 			x_offset: 0,
 			y_offset: -10
 		};
+		var wheel = gAssetLoader.assets['wheel'];
 		this.images['wheel'] = {
-			img: document.getElementById('bike-wheel'),
-			width: document.getElementById('bike-wheel').width,
-			height: document.getElementById('bike-wheel').height,
-			half_width: document.getElementById('bike-wheel').width / 2,
-			half_height: document.getElementById('bike-wheel').height / 2
+			img: wheel,
+			width: wheel.width,
+			height: wheel.height,
+			half_width: wheel.width / 2,
+			half_height: wheel.height / 2
 		};
 
+		var ramp1 = gAssetLoader.assets['ramp1'];
 		this.images['ramp1'] = {
-			img: document.getElementById('ramp-1'),
-			width: document.getElementById('ramp-1').width,
-			height: document.getElementById('ramp-1').height,
-			half_width: document.getElementById('ramp-1').width / 2,
-			half_height: document.getElementById('ramp-1').height / 2,
+			img: ramp1,
+			width: ramp1.width,
+			height: ramp1.height,
+			half_width: ramp1.width / 2,
+			half_height: ramp1.height / 2,
 			x_offset: 0,
 			y_offset: -9
 		};
+
+		var ramp2 = gAssetLoader.assets['ramp2'];
 		this.images['ramp2'] = {
-			img: document.getElementById('ramp-2'),
-			width: document.getElementById('ramp-2').width,
-			height: document.getElementById('ramp-2').height,
-			half_width: document.getElementById('ramp-2').width / 2,
-			half_height: document.getElementById('ramp-2').height / 2,
+			img: ramp2,
+			width: ramp2.width,
+			height: ramp2.height,
+			half_width: ramp2.width / 2,
+			half_height: ramp2.height / 2,
 			x_offset: -18,
 			y_offset: -20
 		}

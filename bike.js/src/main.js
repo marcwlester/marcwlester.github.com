@@ -7,6 +7,8 @@ var manifest = [
 ];
 
 jQuery(document).ready(function() {
-	gAssetLoader.loadManifest(manifest, function() { gBikeGame.run(); });
+	gAssetLoader.loadManifest(manifest, function() { 
+		gBikeGame.run();
+	});
 	//gBikeGame.run();
 });
