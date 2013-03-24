@@ -23,6 +23,7 @@ var AssetLoader = Class.extend({
 	},
 
 	imageOnload: function() {
+		console.log(this);
 		gAssetLoader.loadedAssets += 1;
 
 		if (gAssetLoader.loadedAssets == gAssetLoader.numAssets) {
