@@ -66,10 +66,10 @@ var RaceScreen = Screen.extend({
 
 		this.clearScreen();
 		
-		jQuery('#debug').html(this.endPos + ': ' + gPhysicsEngine.bodies.bike.base.GetPosition().x);
+		//jQuery('#debug').html(this.endPos + ': ' + gPhysicsEngine.bodies.bike.base.GetPosition().x);
 		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos) {
 			this.finishTime = new Date().getMilliseconds();
-			jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
+			//jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
 		} else {
 			gPhysicsEngine.world.Step(1/60, 10, 10);	
 		}
@@ -142,7 +142,7 @@ var RaceScreen = Screen.extend({
 
 		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos) {
 			this.finishTime = new Date().getMilliseconds();
-			jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
+			//jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
 			var raceTime = this.finishTime - this.startTime;
 			jQuery('#starter').html('Finish!<br>' + raceTime);
 		} else {
@@ -218,7 +218,7 @@ var RaceScreen = Screen.extend({
 			setTimeout(function() { jQuery('#starter').html('GO!'); }, 3000);
 			setTimeout(function() { jQuery('#starter').html(''); }, 4000);
 
-			setTimeout(function() { gPhysicsEngine.destroyStarter(); jQuery('#debug').html('start!'); gBikeGame.screens['race'].startTime = new Date().getMilliseconds(); }, 3000);
+			setTimeout(function() { gPhysicsEngine.destroyStarter(); gBikeGame.screens['race'].startTime = new Date().getMilliseconds(); }, 3000);
 		});
 	}
 });

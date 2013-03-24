@@ -105,6 +105,8 @@ var RenderEngine = Class.extend({
 		var wheel_cx = ((pos.x - offset) * this.scale) + x;
 		var wheel_cy = (pos.y * this.scale) + y;
 
+		jQuery('#debug').html(wheel_cx + ", " + wheel_cy);
+
 		ctx.save();
 		ctx.translate(wheel_cx, wheel_cy);
 		ctx.rotate(angle);
