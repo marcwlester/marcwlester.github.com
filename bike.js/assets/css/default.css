@@ -18,3 +18,26 @@ body {
 	height: 800px;
 	margin: 0px;
 }
+
+#debug {
+	width: 300px;
+	height: 200px;
+	position: absolute;
+	background-color: white;
+	color: black;
+	border: 1px solid red;
+	top: 0;
+	left: 0;
+}
+
+#starter {
+	width: 200px;
+	height: 200px;
+	position: absolute;
+	background-color: transparent;
+	color: red;
+	top: 300px;
+	left: 50%;
+	font-size: 100px;
+	text-align: center;
+}

@@ -188,6 +188,27 @@ var PhysicsEngine = Class.extend({
 		});
 		return body;
 	},
+	makeStarter: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var body = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				pos: {x: 0, y: 0},
+				width: 1,
+				height: 5,
+				userData: {
+					name: 'starter',
+					id: 10,
+				}
+			}]
+		});
+		gPhysicsEngine.bodies.starter = body;
+	},
+	destroyStarter: function() {
+		gPhysicsEngine.world.DestroyBody(gPhysicsEngine.bodies.starter);
+	},
 	makeRamp1: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
 		var ramp1 = gPhysicsEngine.makeBody({

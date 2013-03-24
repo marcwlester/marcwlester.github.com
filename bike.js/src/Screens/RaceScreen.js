@@ -16,8 +16,14 @@ var RaceScreen = Screen.extend({
 	motorSpeed: 0,
 	motorOn: false,
 	motorStep: 0.05,
+	torqueStep: 2,
+	torqueValue: 0,
 	minTorque: 200,
 	maxTorque: 800,
+
+	startTime: 0,
+	finishTime: 0,
+	endPos: 0,
 
 	init: function(id) {
 		//console.log(this.parent);
@@ -35,6 +41,62 @@ var RaceScreen = Screen.extend({
 	},
 
 	render: function(dt) {
+		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
+		if (gInputEngine.action('drive')) {
+			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.minTorque);
+			this.motorSpeed = 200;//this.MAX_DRIVE;
+			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_DRIVE);
+		} else if (gInputEngine.action('over-drive')) {
+			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.maxTorque);
+			this.motorSpeed = 800;//this.MAX_OVERDRIVE;
+			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_OVERDRIVE);
+		}
+
+		if (gInputEngine.action('lean-back')) {
+			var angle_speed = 1;
+			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
+			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x - 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
+		} else if (gInputEngine.action('lean-forward')) {
+			var angle_speed = 1;
+			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
+		}
+
+		//gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.torqueValue);
+		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.torqueValue);
+
+		this.clearScreen();
+		
+		jQuery('#debug').html(this.endPos + ': ' + gPhysicsEngine.bodies.bike.base.GetPosition().x);
+		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos) {
+			this.finishTime = new Date().getMilliseconds();
+			jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
+		} else {
+			gPhysicsEngine.world.Step(1/60, 10, 10);	
+		}
+
+		gPhysicsEngine.world.DrawDebugData();
+		gRenderEngine.render(this.ctx, (this.canvas.width / 3), 100);
+		gPhysicsEngine.world.ClearForces();
+		
+		
+		this.torqueValue = Math.max(this.torqueValue - (this.torqueStep/3), 0);
+
+		var head_injury = gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury;
+		if (head_injury) {
+			gPhysicsEngine.bodies.bike.base.SetLinearVelocity(new b2Vec2(0,0));
+			gPhysicsEngine.bodies.bike.base.SetAngularVelocity(0);
+			gPhysicsEngine.bodies.bike.fwheel.SetLinearVelocity(new b2Vec2(0,0));
+			gPhysicsEngine.bodies.bike.rwheel.SetLinearVelocity(new b2Vec2(0,0));
+			gPhysicsEngine.bodies.bike.fwheel.SetAngularVelocity(0);
+			gPhysicsEngine.bodies.bike.rwheel.SetAngularVelocity(0);
+			gPhysicsEngine.bodies.bike.base.SetPositionAndAngle(new b2Vec2(gPhysicsEngine.bodies.bike.base.GetPosition().x,0), 0);
+			gPhysicsEngine.bodies.bike.fwheel.SetPosition(new b2Vec2(gPhysicsEngine.bodies.bike.fwheel.GetPosition().x,0));
+			gPhysicsEngine.bodies.bike.rwheel.SetPosition(new b2Vec2(gPhysicsEngine.bodies.bike.rwheel.GetPosition().x,0));
+			gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury = false;
+		}
+	},
+
+	render1: function(dt) {
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
 		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.minTorque);
 		gPhysicsEngine.bodies.bike.fjoint.SetMotorSpeed(0);
@@ -63,7 +125,7 @@ var RaceScreen = Screen.extend({
 		if (!this.motorOn) {
 			this.motorSpeed -= Math.max(this.motorSpeed - this.motorStep, 0);
 			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
-			gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(10);
+			gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(0);
 		}
 
 		if (gInputEngine.action('lean-back')) {
@@ -76,7 +138,16 @@ var RaceScreen = Screen.extend({
 		}
 
 		this.clearScreen();
-		gPhysicsEngine.world.Step(1/60, 10, 10);
+		
+
+		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos) {
+			this.finishTime = new Date().getMilliseconds();
+			jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
+			var raceTime = this.finishTime - this.startTime;
+			jQuery('#starter').html('Finish!<br>' + raceTime);
+		} else {
+			gPhysicsEngine.world.Step(1/60, 10, 10);	
+		}
 
 		if (head_injury) {
 			gPhysicsEngine.bodies.bike.base.SetLinearVelocity(new b2Vec2(0,0));
@@ -99,6 +170,7 @@ var RaceScreen = Screen.extend({
 	resize: function() {
 		this.canvas.width = this.canvas.style.width = jQuery(window).width();
 		this.canvas.height = this.canvas.style.height = 800;
+		jQuery('#starter').css('left', this.canvas.width / 2 - jQuery('#starter').width() / 2);
 	},
 
 	clearScreen: function()
@@ -117,6 +189,7 @@ var RaceScreen = Screen.extend({
 			gPhysicsEngine.init();
 			gPhysicsEngine.makeTrack(tdata.size, 1);
 			gPhysicsEngine.makeBike(5, 1);
+			gBikeGame.screens['race'].endPos = tdata.end;
 			for (var i = 0; i < tdata.track.length; i++) {
 				var pos = tdata.track[i].pos;
 				switch(tdata.track[i].type) {
@@ -134,12 +207,18 @@ var RaceScreen = Screen.extend({
 					break;
 				}
 			}
-
+			gPhysicsEngine.makeStarter(8, 1);
 			if (self.debugDraw !== null) {
 				//console.log(self.debugDraw);
 				gPhysicsEngine.world.SetDebugDraw(self.debugDraw);
 			}
 			//console.log(gPhysicsEngine.world);
+			setTimeout(function() { jQuery('#starter').html('2'); }, 1000);
+			setTimeout(function() { jQuery('#starter').html('1'); }, 2000);
+			setTimeout(function() { jQuery('#starter').html('GO!'); }, 3000);
+			setTimeout(function() { jQuery('#starter').html(''); }, 4000);
+
+			setTimeout(function() { gPhysicsEngine.destroyStarter(); jQuery('#debug').html('start!'); gBikeGame.screens['race'].startTime = new Date().getMilliseconds(); }, 3000);
 		});
 	}
 });
