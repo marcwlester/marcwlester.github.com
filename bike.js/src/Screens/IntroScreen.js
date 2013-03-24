@@ -12,8 +12,9 @@ var IntroScreen = Screen.extend({
 		//console.log(gInputEngine);
 		if (gInputEngine.action('select')) {
 			console.log('making selection');
-			gBikeGame.screens['race'].loadTrack('track1');
-			gBikeGame.screens['intro'].app.setScreen(gBikeGame.screens['race']);
+			gBikeGame.screens['race'].loadTrack('track1', function() {
+				gBikeGame.setScreen(gBikeGame.screens['race']);
+			});
 		}
 		if (gInputEngine.action('next-option')) {
 			console.log('next option');

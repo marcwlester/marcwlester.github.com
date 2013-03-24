@@ -181,7 +181,7 @@ var RaceScreen = Screen.extend({
 		this.ctx.restore();
 	},
 
-	loadTrack: function(track) {
+	loadTrack: function(track, callback) {
 		var self = this;
 		xhrGet('assets/tracks/' + track + '.json', function(revent) {
 			var data = this.response;
@@ -219,6 +219,8 @@ var RaceScreen = Screen.extend({
 			setTimeout(function() { jQuery('#starter').html(''); }, 4000);
 
 			setTimeout(function() { gPhysicsEngine.destroyStarter(); gBikeGame.screens['race'].startTime = new Date().getMilliseconds(); }, 3000);
+
+			callback();
 		});
 	}
 });
