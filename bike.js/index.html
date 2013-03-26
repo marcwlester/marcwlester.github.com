@@ -4,11 +4,16 @@
 		<title>bike.js!</title>
 
 		<link href='assets/css/default.css' rel='stylesheet' />
+
 	</head>
 	<body>
 
 		<div id='screen-intro' class='screen' tabindex='1'>Intro Screen</div>
-		<div id='screen-race' class='screen' tabindex='2'><canvas id='game_canvas'></canvas><div id='starter'>3</div></div>
+		<div id='screen-race' class='screen' tabindex='2'><canvas id='game_canvas'></canvas>
+			<div id='starter'>3</div>
+			<canvas id='rpm-gauge' width="200" height="200"></div>
+			<canvas id='speed-gauge' width="200" height="200"></div>
+		</div>
 		<!-- <div id='pause-screen' class='screen'>Pause Screen</div>
 		<div id='results-screen' class='screen'>Results Screen</div> -->
 
@@ -16,6 +21,8 @@
 			<div id='start-time'></div>
 			<div id='end-time'></div>
 			<div id='elapsed-time'></div>
+			<div id='torque'></div>
+			<div id='speed'></div>
 		</div>
 
 		<!-- 3rd party sources -->
@@ -26,6 +33,8 @@
 		<script type='text/javascript' src='vendor/threex.js/requestanimationframe.js'></script>
 		<script type='text/javascript' src='vendor/threex.js/keyboardstate.js'></script>
 		<script type='text/javascript' src='vendor/jquery/jquery.min.js'></script>
+		<script type='text/javascript' src='vendor/jsgauge-0.4.6/build/gauge.min.js'></script>
+		<script type='text/javascript' src='vendor/jsgauge-0.4.6/build/jquery.gauge.min.js'></script>
 
 		<!-- source files -->
 		<script type='text/javascript' src='src/AssetLoader.js'></script>

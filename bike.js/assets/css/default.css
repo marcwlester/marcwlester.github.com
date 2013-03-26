@@ -41,3 +41,14 @@ body {
 	font-size: 100px;
 	text-align: center;
 }
+
+#rpm-gauge {
+	position: absolute;
+	top: 600px;
+	left: 0;
+}
+#speed-gauge {
+	position: absolute;
+	top: 600px;
+	left: 200px;
+}

@@ -3,7 +3,22 @@ var RenderEngine = Class.extend({
 
 	images: {},
 
+	rpmMeter: null,
+	rpmData: null,
+	rpmMeterValue: 0,
+	speedMeter: null,
+	speedMeterValue: 0,
+
+	init: function() {
+		//console.log(google.visualization);
+		//this.rpmMeter = new google.visualization.Gauge(document.getElementById('rpm-gauge'));
+		//this.speedMeter = new google.visualization.Gauge(document.getElementById('speed-gauge'));
+	},
+
+	
+
 	loadContent: function() {
+		
 		var background = gAssetLoader.assets['background'];
 		this.images['background'] = {
 			img: background,
@@ -56,6 +71,20 @@ var RenderEngine = Class.extend({
 			x_offset: -18,
 			y_offset: -20
 		}
+		jQuery('#rpm-gauge').gauge({
+			min: 0,
+			max: 10000,
+			label: 'RPM',
+			bands: [
+				{color: "#ffff00", from: 6000, to: 8000},
+				{color: "#ff0000", from: 8000, to: 10000}
+			]
+		}).gauge('setValue', 0);
+		jQuery('#speed-gauge').gauge({
+			min: 0,
+			max: 100,
+			label: 'KM/H'
+		}).gauge('setValue', 0);
 	},
 
 	render: function(ctx, x, y) {
@@ -77,6 +106,8 @@ var RenderEngine = Class.extend({
 		this.renderFrontWheel(ctx, x, y);
 		this.renderRearWheel(ctx, x, y);
 		this.renderBike(ctx, x, y);
+		jQuery('#rpm-gauge').gauge('setValue', gBikeGame.screens['race'].torqueValue * 10);
+		jQuery('#speed-gauge').gauge('setValue', Math.max(gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x * 2, 0));
 	},
 
 	renderBg: function(ctx, x, y) {

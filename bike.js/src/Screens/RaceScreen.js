@@ -11,14 +11,14 @@ var RaceScreen = Screen.extend({
 	ctx: null,
 	debugDraw: null,
 
-	MAX_DRIVE: 20,
-	MAX_OVERDRIVE: 28,
+	MAX_DRIVE: 28,
+	MAX_OVERDRIVE: 32,
 	motorSpeed: 0,
 	motorOn: false,
 	motorStep: 0.05,
-	torqueStep: 2,
+	torqueStep: 25,
 	torqueValue: 0,
-	minTorque: 200,
+	minTorque: 600,
 	maxTorque: 800,
 
 	startTime: 0,
@@ -41,6 +41,8 @@ var RaceScreen = Screen.extend({
 	},
 
 	render: function(dt) {
+		//if (this.startTime == 0) this.torqueStep = 10;
+		//else this.torqueStep = 2;
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
 		if (gInputEngine.action('drive')) {
 			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.minTorque);
@@ -53,11 +55,11 @@ var RaceScreen = Screen.extend({
 		}
 
 		if (gInputEngine.action('lean-back')) {
-			var angle_speed = 1;
+			var angle_speed = 0.5;
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x - 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		} else if (gInputEngine.action('lean-forward')) {
-			var angle_speed = 1;
+			var angle_speed = 0.5;
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		}
 
@@ -65,6 +67,9 @@ var RaceScreen = Screen.extend({
 		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.torqueValue);
 
 		this.clearScreen();
+
+		jQuery('#torque').html(this.torqueValue);
+		jQuery('#speed').html(gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x);
 		
 		//jQuery('#debug').html(this.endPos + ': ' + gPhysicsEngine.bodies.bike.base.GetPosition().x);
 		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos && this.finishTime == 0) {
@@ -73,7 +78,10 @@ var RaceScreen = Screen.extend({
 			jQuery('#starter').html('Finish!<br>' + (raceTime / 1000) + "s");
 			//jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
 		} else {
-			gPhysicsEngine.world.Step(1/60, 10, 10);	
+			if (this.finishTime == 0) {
+				gPhysicsEngine.world.Step(1/60, 10, 10);		
+			}
+			
 		}
 
 		gPhysicsEngine.world.DrawDebugData();
@@ -81,7 +89,7 @@ var RaceScreen = Screen.extend({
 		gPhysicsEngine.world.ClearForces();
 		
 		
-		this.torqueValue = Math.max(this.torqueValue - (this.torqueStep/3), 0);
+		this.torqueValue = Math.max(this.torqueValue - (this.torqueStep/5), 100);
 
 		var head_injury = gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury;
 		if (head_injury) {
