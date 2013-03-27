@@ -12,7 +12,7 @@ var RaceScreen = Screen.extend({
 	debugDraw: null,
 
 	MAX_DRIVE: 28,
-	MAX_OVERDRIVE: 32,
+	MAX_OVERDRIVE: 36,
 	motorSpeed: 0,
 	motorOn: false,
 	motorStep: 0.05,
@@ -32,6 +32,13 @@ var RaceScreen = Screen.extend({
 	lastRotation: 0,
 	numFlips: 0,
 	startRotation: null,
+
+
+	boostCount: 0, //how many ticks you can boost for
+	boostLength: 60,  //60 ticks a second
+	maxBoostCount: 5 * 60,
+
+
 
 	init: function(id) {
 		//console.log(this.parent);
@@ -58,9 +65,12 @@ var RaceScreen = Screen.extend({
 			this.motorSpeed = 200;//this.MAX_DRIVE;
 			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_DRIVE);
 		} else if (gInputEngine.action('over-drive')) {
-			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.maxTorque);
-			this.motorSpeed = 800;//this.MAX_OVERDRIVE;
-			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_OVERDRIVE);
+			if (this.boostCount > 0) {
+				this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.maxTorque);
+				this.motorSpeed = 800;//this.MAX_OVERDRIVE;
+				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_OVERDRIVE);
+				this.boostCount -= 1;
+			}
 		}
 
 		if (gInputEngine.action('lean-back')) {
@@ -96,7 +106,11 @@ var RaceScreen = Screen.extend({
 				//console.log(":"+gPhysicsEngine.bodies.bike.base.GetAngle());
 				//console.log(rotations);
 				//console.log(":::"+rotations / (Math.PI * 2));
-				this.numFlips += Math.floor(rotations / (Math.PI * 2));
+				var flips = Math.round(rotations / (Math.PI * 2));
+
+				this.numFlips += flips
+				var boostInc = flips * this.boostLength;
+				this.boostCount = Math.min(this.boostCount + boostInc, this.maxBoostCount);
 			}
 			this.rotationCount = 0;
 			this.rotationDirection = 0;

@@ -97,6 +97,11 @@ var RenderEngine = Class.extend({
 			max: 100,
 			label: 'KM/H'
 		}).gauge('setValue', 0);
+		jQuery('#boost-gauge').gauge({
+			min: 0,
+			max: 100,
+			label: 'NOS'
+		}).gauge('setValue', 0);
 	},
 
 	render: function(ctx, x, y) {
@@ -121,6 +126,7 @@ var RenderEngine = Class.extend({
 		this.renderHelmet(ctx, x, y);
 		jQuery('#rpm-gauge').gauge('setValue', gBikeGame.screens['race'].torqueValue * 10);
 		jQuery('#speed-gauge').gauge('setValue', Math.max(gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x * 2, 0));
+		jQuery('#boost-gauge').gauge('setValue', (gBikeGame.screens['race'].boostCount / gBikeGame.screens['race'].maxBoostCount) * 100);
 	},
 
 	renderBg: function(ctx, x, y) {
