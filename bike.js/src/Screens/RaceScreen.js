@@ -25,6 +25,14 @@ var RaceScreen = Screen.extend({
 	finishTime: 0,
 	endPos: 0,
 
+	wheelyForce: 0,
+
+	rotationCounter: 0,
+	rotationDirection: 0,
+	lastRotation: 0,
+	numFlips: 0,
+	startRotation: null,
+
 	init: function(id) {
 		//console.log(this.parent);
 		this.parent(id);
@@ -43,6 +51,7 @@ var RaceScreen = Screen.extend({
 	render: function(dt) {
 		//if (this.startTime == 0) this.torqueStep = 10;
 		//else this.torqueStep = 2;
+		var inAir = gPhysicsEngine.bodies.bike.rwheel.GetFixtureList().GetUserData().inAir;
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
 		if (gInputEngine.action('drive')) {
 			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.minTorque);
@@ -55,7 +64,8 @@ var RaceScreen = Screen.extend({
 		}
 
 		if (gInputEngine.action('lean-back')) {
-			var angle_speed = 0.5;
+			
+			var angle_speed = 1;
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,-10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x - 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		} else if (gInputEngine.action('lean-forward')) {
@@ -63,13 +73,47 @@ var RaceScreen = Screen.extend({
 			gPhysicsEngine.bodies.bike.base.ApplyImpulse(new b2Vec2(0,10 * angle_speed), new b2Vec2(gPhysicsEngine.bodies.bike.base.GetWorldCenter().x + 1.5, gPhysicsEngine.bodies.bike.base.GetWorldCenter().y));
 		}
 
+		if (inAir) {
+			var thisRotation = gPhysicsEngine.bodies.bike.base.GetAngle();
+			var thisRotationDirection = this.lastRotation - thisRotation > 0 ? 1 : -1;
+
+			if (this.startRotation == null) {
+				//start it as if they left from 0
+				this.startRotation = thisRotation;// - ((thisRotation % (Math.PI * 2)));
+				//console.log(":" + this.startRotation);
+			}
+			if (this.rotationDirection != 0 && (this.rotationDirection != thisRotationDirection)) {
+				this.startRotation = null;
+			}
+
+			this.rotationDirection = thisRotationDirection;
+			//this.lastRotation = thisRotation;
+		} else {
+			if (this.startRotation != null) {
+				var rotations = Math.abs(gPhysicsEngine.bodies.bike.base.GetAngle() - (this.startRotation));
+				console.log(":"+this.startRotation);
+				console.log("::"+this.startRotation % (Math.PI * 2));
+				//console.log(":"+gPhysicsEngine.bodies.bike.base.GetAngle());
+				//console.log(rotations);
+				//console.log(":::"+rotations / (Math.PI * 2));
+				this.numFlips += Math.floor(rotations / (Math.PI * 2));
+			}
+			this.rotationCount = 0;
+			this.rotationDirection = 0;
+			this.lastRotation = 0;
+			this.startRotation = null;
+		}
+		
 		//gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.torqueValue);
 		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.torqueValue);
+
+		//jQuery('#rotation').html(gPhysicsEngine.bodies.bike.base.GetAngle() % (Math.PI * 2));
 
 		this.clearScreen();
 
 		jQuery('#torque').html(this.torqueValue);
 		jQuery('#speed').html(gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x);
+		jQuery('#rotation').html(this.numFlips);
 		
 		//jQuery('#debug').html(this.endPos + ': ' + gPhysicsEngine.bodies.bike.base.GetPosition().x);
 		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos && this.finishTime == 0) {
@@ -83,6 +127,10 @@ var RaceScreen = Screen.extend({
 			}
 			
 		}
+
+
+
+		//jQuery('#rotation').html(gPhysicsEngine.bodies.bike.base.GetAngle() % (Math.PI * 2) + " : " + this.rotationCount);
 
 		gPhysicsEngine.world.DrawDebugData();
 		gRenderEngine.render(this.ctx, (this.canvas.width / 3), 100);
@@ -103,6 +151,7 @@ var RaceScreen = Screen.extend({
 			gPhysicsEngine.bodies.bike.fwheel.SetPosition(new b2Vec2(gPhysicsEngine.bodies.bike.fwheel.GetPosition().x,0));
 			gPhysicsEngine.bodies.bike.rwheel.SetPosition(new b2Vec2(gPhysicsEngine.bodies.bike.rwheel.GetPosition().x,0));
 			gPhysicsEngine.bodies.bike.base.GetFixtureList().GetUserData().headInjury = false;
+			this.startRotation = null;
 		}
 
 		var elapsedTime = new Date().getTime() - this.startTime;

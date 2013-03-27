@@ -44,9 +44,18 @@ var PhysicsEngine = Class.extend({
 				if (index == -1) {
 					contact.GetFixtureB().GetUserData().contacts.push(contactId);
 					contact.GetFixtureB().GetUserData().inAir = false;
-					bike_in_air = false;
 				}
 			}
+
+			// if (contact.GetFixtureB().GetFilterData().groupIndex == 8) {
+			// 	var contactId = contact.GetFixtureA().GetUserData().id;
+			// 	if (!contact.GetFixtureB().GetUserData().contacts) contact.GetFixtureB().GetUserData().fcontacts = [];
+			// 	var index = contact.GetFixtureB().GetUserData().fcontacts.indexOf(contactId);
+			// 	if (index == -1) {
+			// 		contact.GetFixtureB().GetUserData().fcontacts.push(contactId);
+			// 		contact.GetFixtureB().GetUserData().wheely = false;
+			// 	}
+			// }
 		};
 		listener.EndContact = function(contact) {
 			if (contact.GetFixtureB().GetFilterData().groupIndex == 7) {
@@ -56,11 +65,23 @@ var PhysicsEngine = Class.extend({
 				if (index >= 0) {
 					contact.GetFixtureB().GetUserData().contacts.splice(index, 1);
 					if (contact.GetFixtureB().GetUserData().contacts.length == 0) {
-						bike_in_air = true;
 						contact.GetFixtureB().GetUserData().inAir = true;
+						//console.log(contact.GetFixtureB().GetUserData());
 					}
 				}
 			}
+
+			// if (contact.GetFixtureB().GetFilterData().groupIndex == 8) {
+			// 	var contactId = contact.GetFixtureA().GetUserData().id;
+			// 	if (!contact.GetFixtureB().GetUserData().contacts) contact.GetFixtureB().GetUserData().fcontacts = [];
+			// 	var index = contact.GetFixtureB().GetUserData().fcontacts.indexOf(contactId);
+			// 	if (index >= 0) {
+			// 		contact.GetFixtureB().GetUserData().fcontacts.splice(index, 1);
+			// 		if (contact.GetFixtureB().GetUserData().fcontacts.length == 0) {
+			// 			contact.GetFixtureB().GetUserData().wheely = true;
+			// 		}
+			// 	}
+			// }
 		};
 		this.world.SetContactListener(listener);
 	},

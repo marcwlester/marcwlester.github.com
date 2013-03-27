@@ -41,6 +41,18 @@ var RenderEngine = Class.extend({
 			x_offset: 0,
 			y_offset: -10
 		};
+		var redhelmet = gAssetLoader.assets['helmet-red'];
+
+		this.images['helmets'] = {};
+		this.images['helmets']['red'] = {
+			img: redhelmet,
+			width: redhelmet.width,
+			height: redhelmet.height,
+			half_width: redhelmet.width / 2,
+			half_height: redhelmet.height / 2,
+			x_offset: 10,
+			y_offset: -60,
+		};
 		var wheel = gAssetLoader.assets['wheel'];
 		this.images['wheel'] = {
 			img: wheel,
@@ -106,6 +118,7 @@ var RenderEngine = Class.extend({
 		this.renderFrontWheel(ctx, x, y);
 		this.renderRearWheel(ctx, x, y);
 		this.renderBike(ctx, x, y);
+		this.renderHelmet(ctx, x, y);
 		jQuery('#rpm-gauge').gauge('setValue', gBikeGame.screens['race'].torqueValue * 10);
 		jQuery('#speed-gauge').gauge('setValue', Math.max(gPhysicsEngine.bodies.bike.base.GetLinearVelocity().x * 2, 0));
 	},
@@ -125,14 +138,20 @@ var RenderEngine = Class.extend({
 		var bodyAngle = gPhysicsEngine.bodies.bike.base.GetAngle();
 		var baseOffset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
 		var base = this.images.bikes.red;
+		var helmet = this.images.helmets.red;
 		var body_cx = (bodyPos.x - baseOffset) * this.scale + x;
 		var body_cy = bodyPos.y * this.scale + y;
 
 		ctx.save();
 		ctx.translate(body_cx, body_cy);
 		ctx.rotate(bodyAngle);
-		ctx.drawImage(base.img, -base.half_width + base.x_offset, -base.half_height + base.y_offset)
+		ctx.drawImage(base.img, -base.half_width + base.x_offset, -base.half_height + base.y_offset);
+		ctx.drawImage(helmet.img, -helmet.half_width + helmet.x_offset, -helmet.half_height + helmet.y_offset);
 		ctx.restore();
+	},
+
+	renderHelmet: function(ctx, x, y) {
+
 	},
 
 	renderFrontWheel: function(ctx, x, y) {
