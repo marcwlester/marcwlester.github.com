@@ -119,7 +119,7 @@ var RenderEngine = Class.extend({
 				break;
 			}
 		}
-		var b = this.blur(ctx, 0, 0, ctx.width, ctx.height, 5, 0, 10);
+		//var b = this.blur(ctx, 0, 0, ctx.width, ctx.height, 5, 0, 10);
 		//if (!b) console.log('no blur');
 		this.renderFrontWheel(ctx, x, y);
 		this.renderRearWheel(ctx, x, y);

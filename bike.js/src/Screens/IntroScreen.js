@@ -8,6 +8,9 @@ var IntroScreen = Screen.extend({
 		87: 'prev-option'
 	},
 
+	buttonCooldownMax: 50,
+	buttonCooldown: 0,
+
 	render: function(dt) {
 		//console.log(gInputEngine);
 		if (gInputEngine.action('select')) {
@@ -16,12 +19,16 @@ var IntroScreen = Screen.extend({
 				gBikeGame.setScreen(gBikeGame.screens['race']);
 			});
 		}
-		if (gInputEngine.action('next-option')) {
-			console.log('next option');
+		if (this.buttonCooldown == 0) {
+			this.buttonCooldown = this.buttonCooldownMax;
+			if (gInputEngine.action('next-option')) {
+				console.log('next option');
+			}
+			if (gInputEngine.action('prev-option')) {
+				console.log('previous option');
+			}
 		}
-		if (gInputEngine.action('prev-option')) {
-			console.log('previous option');
-		}
+		this.buttonCooldown = Math.max(this.buttonCooldown - 1, 0)
 	}
 });
 

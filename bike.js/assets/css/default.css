@@ -10,7 +10,8 @@ body {
 	width: 800px;
 	height: 600px;
 	margin: 0px auto;
-	background-color: black;
+	display: none;
+	/*background-color: black;*/
 }
 
 #screen-race {
@@ -56,4 +57,8 @@ body {
 	position: absolute;
 	top: 600px;
 	left: 400px;
+}
+
+div.title {
+	text-align: center;
 }
