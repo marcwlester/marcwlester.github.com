@@ -223,7 +223,7 @@ var RenderEngine = Class.extend({
 		try {
 			var imageData = ctx.getImageData(x, y, width, height);
 		} catch(e) {
-			//if (!this.suppressCrossDomainErrors) throw new Error("unable to access local image data: " + e);
+			throw new Error("unable to access local image data: " + e);
 			return false;
 		}
  
