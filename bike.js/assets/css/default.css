@@ -12,6 +12,7 @@ body {
 	margin: 0px auto;
 	display: none;
 	/*background-color: black;*/
+	outline: none !important;
 }
 
 #screen-race {
