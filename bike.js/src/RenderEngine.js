@@ -9,6 +9,8 @@ var RenderEngine = Class.extend({
 	speedMeter: null,
 	speedMeterValue: 0,
 
+	drawGateUp: true,
+
 	init: function() {
 		//console.log(google.visualization);
 		//this.rpmMeter = new google.visualization.Gauge(document.getElementById('rpm-gauge'));
@@ -82,7 +84,48 @@ var RenderEngine = Class.extend({
 			half_height: ramp2.height / 2,
 			x_offset: -18,
 			y_offset: -20
-		}
+		};
+		var ramp3 = gAssetLoader.assets['ramp3'];
+		this.images['ramp3'] = {
+			img: ramp3,
+			width: ramp3.width,
+			height: ramp3.height,
+			half_width: ramp3.width / 2,
+			half_height: ramp3.height / 2,
+			x_offset: 280,
+			y_offset: -80
+		};
+
+		var gateup = gAssetLoader.assets['gate-up'];
+		this.images['gateup'] = {
+			img: gateup,
+			width: gateup.width,
+			height: gateup.height,
+			half_width: gateup.width / 2,
+			half_height: gateup.height / 2,
+			x_offset: -5,
+			y_offset: 388
+		};
+		var gatedown = gAssetLoader.assets['gate-down'];
+		this.images['gatedown'] = {
+			img: gatedown,
+			width: gatedown.width,
+			height: gatedown.height,
+			half_width: gatedown.width / 2,
+			half_height: gatedown.height / 2,
+			x_offset: 3,
+			y_offset: 395
+		};
+		var finish = gAssetLoader.assets['finish'];
+		this.images['finish'] = {
+			img: finish,
+			width: finish.width,
+			height: finish.height,
+			half_width: finish.width / 2,
+			half_height: finish.height / 2,
+			x_offset: 0,
+			y_offset: 441
+		};
 		jQuery('#rpm-gauge').gauge({
 			min: 0,
 			max: 10000,
@@ -106,6 +149,12 @@ var RenderEngine = Class.extend({
 
 	render: function(ctx, x, y) {
 		this.renderBg(ctx, x, y);
+		this.renderFinish(ctx, x, y, gBikeGame.screens['race'].endPos);
+		if (this.drawGateUp) {
+			this.renderGateUp(ctx, x, y);
+		} else {
+			this.renderGateDown(ctx, x, y);
+		}
 		
 		var ramps = gPhysicsEngine.bodies.ramps;
 		for (var i = 0; i < ramps.length; i++) {
@@ -116,6 +165,9 @@ var RenderEngine = Class.extend({
 				break;
 				case "ramp2":
 				this.renderRamp2(ctx, x, y, ramps[i]);
+				break;
+				case "ramp3":
+				this.renderRamp3(ctx, x, y, ramps[i]);
 				break;
 			}
 		}
@@ -199,7 +251,7 @@ var RenderEngine = Class.extend({
 		var ramp1_cy = pos.y * this.scale + y;
 		ctx.save();
 		ctx.translate(ramp1_cx, ramp1_cy);
-		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset)
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset);
 		ctx.restore();
 	},
 
@@ -211,7 +263,52 @@ var RenderEngine = Class.extend({
 		var ramp1_cy = pos.y * this.scale + y;
 		ctx.save();
 		ctx.translate(ramp1_cx, ramp1_cy);
-		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset)
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset);
+		ctx.restore();
+	},
+
+	renderRamp3: function(ctx, x, y, ramp) {
+		var pos = ramp.GetPosition();
+		var offset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
+		var image = this.images.ramp3;
+		var ramp1_cx = (pos.x - offset) * this.scale + x;
+		var ramp1_cy = pos.y * this.scale + y;
+		ctx.save();
+		ctx.translate(ramp1_cx, ramp1_cy);
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset);
+		ctx.restore();
+	},
+	renderGateUp: function(ctx, x, y) {
+		var pos = { x: 8, y: 0};
+		var offset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
+		var image = this.images.gateup;
+		var cx = (pos.x - offset) * this.scale + x;
+		var cy = pos.y * this.scale + y;
+		ctx.save();
+		ctx.translate(cx, cy);
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset);
+		ctx.restore();
+	},
+	renderGateDown: function(ctx, x, y) {
+		var pos = { x: 8, y: 0};
+		var offset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
+		var image = this.images.gatedown;
+		var cx = (pos.x - offset) * this.scale + x;
+		var cy = pos.y * this.scale + y;
+		ctx.save();
+		ctx.translate(cx, cy);
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset);
+		ctx.restore();
+	},
+	renderFinish: function(ctx, x, y, endPos) {
+		var pos = { x: endPos, y: 0};
+		var offset = gPhysicsEngine.bodies.bike.base.GetPosition().x;
+		var image = this.images.finish;
+		var cx = (pos.x - offset) * this.scale + x;
+		var cy = pos.y * this.scale + y;
+		ctx.save();
+		ctx.translate(cx, cy);
+		ctx.drawImage(image.img, -image.half_width + image.x_offset, -image.half_height + image.y_offset);
 		ctx.restore();
 	},
 

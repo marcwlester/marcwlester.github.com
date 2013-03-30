@@ -33,33 +33,57 @@ body {
 }
 
 #starter {
-	width: 200px;
+	width: 10%;
 	height: 200px;
 	position: absolute;
 	background-color: transparent;
 	color: red;
 	top: 300px;
-	left: 50%;
+	left: 45%;
 	font-size: 100px;
 	text-align: center;
 }
 
-#rpm-gauge {
+#dashboard {
 	position: absolute;
+	width: 650px;
+	margin-left: -325px;
+	/*margin-top: -200px;*/
+	z-index: 10;
 	top: 600px;
-	left: 0;
+	left: 50%;
+}
+
+#rpm-gauge {
+	/*position: absolute;
+	top: 600px;
+	left: 0;*/
+	z-index: 10;
 }
 #speed-gauge {
-	position: absolute;
+	/*position: absolute;
 	top: 600px;
-	left: 200px;
+	left: 200px;*/
+	z-index: 10;
 }
 #boost-gauge {
-	position: absolute;
+	/*position: absolute;
 	top: 600px;
-	left: 400px;
+	left: 400px;*/
+	z-index: 10;
 }
 
 div.title {
 	text-align: center;
+}
+#finish {
+	width: 20%;
+	height: 300px;
+	position: absolute;
+	background-color: transparent;
+	color: red;
+	top: 300px;
+	left: 40%;
+	text-align: center;
+	display: none;
 }

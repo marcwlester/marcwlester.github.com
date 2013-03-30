@@ -3,6 +3,7 @@
 
 console.log(jQuery(window).width());
 console.log(jQuery(document).width());
+jQuery('#screen-race').show();
 Math.TWOPI = Math.PI * 2;
 var canvas = document.getElementById('game_canvas');
 var ctx = canvas.getContext('2d');
@@ -362,6 +363,59 @@ var ramp3 = makeBodyEx(world, {
 	}],
 });
 
+var ramp5 = makeBodyEx(world, {
+	type: 'static',
+	pos: { x: 60, y: 19.3 },
+	fixtures: [{
+		shape: 'block',
+		pos: { x: 0, y: -1 },
+		width: 6,
+		height: 0.6,
+		rotation: -Math.PI / 4,
+		userdata: { id: 99 }
+	},{
+		shape: 'block',
+		pos: {x: 3.4, y: -3.0},
+		width: 3,
+		height: 0.6,
+		userdata: {id: 98}
+	},{
+		shape: 'block',
+		pos: {x: 6.5, y: -4.9},
+		width: 6,
+		height: 0.6,
+		rotation: -Math.PI / 4,
+		userdata: { id: 97 }
+	}, {
+		shape: 'block',
+		pos: {x: 10.4, y: -6.9},
+		width: 4,
+		height: 0.6,
+		userdata: {id: 96}
+	}, {
+		shape: 'block',
+		pos: {x: 14.8, y: -5.4},
+		width: 6,
+		height: 0.6,
+		rotation: Math.PI / 6,
+		userdata: {id: 95}
+	},{
+		shape: 'block',
+		pos: {x: 19.5, y: -3.9},
+		width: 4,
+		height: 0.6,
+		userdata: {id: 94}
+	},{
+		shape: 'block',
+		pos: {x: 25.4, y: -1.6},
+		width: 9.2,
+		height: 0.6,
+		rotation: Math.PI / 6,
+		userdata: {id: 93}
+	}
+	]
+});
+
 /*
 var ramp3a = makeBody(world, {
 	shape: 'block',
@@ -393,7 +447,7 @@ var ramp3c = makeBody(world, {
 var ramp4a = makeBody(world, {
 	shape: 'block',
 	type: 'static',
-	x: 5,
+	x: 500,
 	y: 20,
 	height: 1,
 	width: 1,
@@ -713,10 +767,10 @@ function render()
 	}
 	
 	
-	ctx.drawImage(background_img, 0 - bg_offset, 0 + screen_y_offset);
-	ctx.drawImage(background_img, background_img.width - bg_offset, 0 + screen_y_offset);
-	ctx.drawImage(background_img, (background_img.width * 2) - bg_offset, 0 + screen_y_offset);
-	ctx.drawImage(background_img, (background_img.width * 3) - bg_offset, 0 + screen_y_offset);
+	//ctx.drawImage(background_img, 0 - bg_offset, 0 + screen_y_offset);
+	//ctx.drawImage(background_img, background_img.width - bg_offset, 0 + screen_y_offset);
+	//ctx.drawImage(background_img, (background_img.width * 2) - bg_offset, 0 + screen_y_offset);
+	//ctx.drawImage(background_img, (background_img.width * 3) - bg_offset, 0 + screen_y_offset);
 	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset - 800 + bg_offset, 0);
 	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset, 0);
 	//ctx.drawImage(background_img, (0 - world_x_offset) * draw_scale + screen_x_offset + 800 + bg_offset, 0);
@@ -809,7 +863,7 @@ function render()
 }
 
 debugDraw.SetSprite(ctx);
-debugDraw.SetDrawScale(1);
+debugDraw.SetDrawScale(20);
 debugDraw.SetFillAlpha(0.3);
 debugDraw.SetLineThickness(1.0);
 debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);

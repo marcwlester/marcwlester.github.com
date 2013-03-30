@@ -35,20 +35,26 @@ var BikeGame = Class.extend({
 
 	startTrack1: function() {
 		gBikeGame.screens['race'].loadTrack('track1', function() {
+			jQuery('#finish').hide();
 			gBikeGame.setScreen(gBikeGame.screens['race']);
 		});
 	},
 
 	startTrack2: function() {
 		gBikeGame.screens['race'].loadTrack('track2', function() {
+			jQuery('#finish').hide();
 			gBikeGame.setScreen(gBikeGame.screens['race']);
 		});
 	},
 
 	startTrack3: function() {
 		gBikeGame.screens['race'].loadTrack('track3', function() {
+			jQuery('#finish').hide();
 			gBikeGame.setScreen(gBikeGame.screens['race']);
 		});
+	},
+	backToMenu: function() {
+		this.setScreen(this.screens['intro']);
 	}
 });
 

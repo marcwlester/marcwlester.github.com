@@ -133,7 +133,8 @@ var RaceScreen = Screen.extend({
 		if (gPhysicsEngine.bodies.bike.base.GetPosition().x >= this.endPos && this.finishTime == 0) {
 			this.finishTime = new Date().getTime();
 			var raceTime = this.finishTime - this.startTime;
-			jQuery('#starter').html('Finish!<br>' + (raceTime / 1000) + "s");
+			jQuery('#finish-time').html((raceTime / 1000) + "s");
+			jQuery('#finish').show();
 			//jQuery('#debug').html(gPhysicsEngine.bodies.bike.base.GetPosition().x);
 		} else {
 			if (this.finishTime == 0) {
@@ -227,6 +228,7 @@ var RaceScreen = Screen.extend({
 				gPhysicsEngine.destroyStarter(); 
 				gBikeGame.screens['race'].startTime = new Date().getTime(); 
 				jQuery('#start-time').html(gBikeGame.screens['race'].startTime);
+				gRenderEngine.drawGateUp = false;
 			}, 3000);
 
 			callback();

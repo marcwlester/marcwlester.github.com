@@ -291,6 +291,62 @@ var PhysicsEngine = Class.extend({
 	},
 	makeRamp3: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var ramp3 = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				pos: { x: 0, y: -1 },
+				width: 6,
+				height: 0.6,
+				rotation: -Math.PI / 4,
+				userdata: { id: 1300 }
+			},{
+				shape: 'block',
+				pos: {x: 3.4, y: -3.0},
+				width: 3,
+				height: 0.6,
+				userdata: {id: 1301}
+			},{
+				shape: 'block',
+				pos: {x: 6.5, y: -4.9},
+				width: 6,
+				height: 0.6,
+				rotation: -Math.PI / 4,
+				userdata: { id: 1302 }
+			}, {
+				shape: 'block',
+				pos: {x: 10.4, y: -6.9},
+				width: 4,
+				height: 0.6,
+				userdata: {id: 1303}
+			}, {
+				shape: 'block',
+				pos: {x: 14.8, y: -5.4},
+				width: 6,
+				height: 0.6,
+				rotation: Math.PI / 6,
+				userdata: {id: 1304}
+			},{
+				shape: 'block',
+				pos: {x: 19.5, y: -3.9},
+				width: 4,
+				height: 0.6,
+				userdata: {id: 1305}
+			},{
+				shape: 'block',
+				pos: {x: 25.4, y: -1.6},
+				width: 9.2,
+				height: 0.6,
+				rotation: Math.PI / 6,
+				userdata: {id: 1306}
+			}
+			],
+			userdata: {
+				name: 'ramp3'
+			}
+		});
+		gPhysicsEngine.bodies['ramps'].push(ramp3);
 	},
 	makeRamp4: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
