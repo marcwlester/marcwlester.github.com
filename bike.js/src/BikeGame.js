@@ -36,6 +36,7 @@ var BikeGame = Class.extend({
 	startTrack1: function() {
 		gBikeGame.screens['race'].loadTrack('track1', function() {
 			jQuery('#finish').hide();
+			//gBikeGame.screens['race'] = new RaceScreen('screen-race');
 			gBikeGame.setScreen(gBikeGame.screens['race']);
 		});
 	},
@@ -43,6 +44,8 @@ var BikeGame = Class.extend({
 	startTrack2: function() {
 		gBikeGame.screens['race'].loadTrack('track2', function() {
 			jQuery('#finish').hide();
+			//gBikeGame.screens['race'] = new RaceScreen('screen-race');
+			//gBikeGame.screens['race'].init('screen-race');
 			gBikeGame.setScreen(gBikeGame.screens['race']);
 		});
 	},
@@ -50,6 +53,7 @@ var BikeGame = Class.extend({
 	startTrack3: function() {
 		gBikeGame.screens['race'].loadTrack('track3', function() {
 			jQuery('#finish').hide();
+			//gBikeGame.screens['race'] = new RaceScreen('screen-race');
 			gBikeGame.setScreen(gBikeGame.screens['race']);
 		});
 	},

@@ -14,7 +14,7 @@ var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 var PhysicsEngine = Class.extend({
 	world: null,
-	scale: 2,
+	scale: 4,
 	bodies: {
 		track: null,
 		bike: {
@@ -26,6 +26,35 @@ var PhysicsEngine = Class.extend({
 		},
 		ramps: []
 	},
+	bodyCache: [],
+	jointCache: [],
+	clearBodies: function() {
+		if (gPhysicsEngine.bodyCache.length) {
+			for (var i = 0; i < gPhysicsEngine.bodyCache.length; i++) {
+				gPhysicsEngine.world.DestroyBody(gPhysicsEngine.bodyCache[i]);
+			}
+		}
+		if (gPhysicsEngine.jointCache.length) {
+			for (var i = 0; i < gPhysicsEngine.jointCache.length; i++) {
+				gPhysicsEngine.world.DestroyJoint(gPhysicsEngine.jointCache[i]);
+			}
+		}
+		gPhysicsEngine.bodyCache = [];
+		gPhysicsEngine.jointCache = [];
+
+		gPhysicsEngine.bodies = {
+			track: null,
+			bike: {
+				base: null,
+				fwheel: null,
+				rwheel: null,
+				rjoint: null,
+				fjoint: null
+			},
+			ramps: []
+		};
+	},
+
 	init: function() {
 		gravity = 9.8;
 		this.world = new b2World(new b2Vec2(0,gravity),true);
@@ -46,16 +75,6 @@ var PhysicsEngine = Class.extend({
 					contact.GetFixtureB().GetUserData().inAir = false;
 				}
 			}
-
-			// if (contact.GetFixtureB().GetFilterData().groupIndex == 8) {
-			// 	var contactId = contact.GetFixtureA().GetUserData().id;
-			// 	if (!contact.GetFixtureB().GetUserData().contacts) contact.GetFixtureB().GetUserData().fcontacts = [];
-			// 	var index = contact.GetFixtureB().GetUserData().fcontacts.indexOf(contactId);
-			// 	if (index == -1) {
-			// 		contact.GetFixtureB().GetUserData().fcontacts.push(contactId);
-			// 		contact.GetFixtureB().GetUserData().wheely = false;
-			// 	}
-			// }
 		};
 		listener.EndContact = function(contact) {
 			if (contact.GetFixtureB().GetFilterData().groupIndex == 7) {
@@ -66,22 +85,9 @@ var PhysicsEngine = Class.extend({
 					contact.GetFixtureB().GetUserData().contacts.splice(index, 1);
 					if (contact.GetFixtureB().GetUserData().contacts.length == 0) {
 						contact.GetFixtureB().GetUserData().inAir = true;
-						//console.log(contact.GetFixtureB().GetUserData());
 					}
 				}
 			}
-
-			// if (contact.GetFixtureB().GetFilterData().groupIndex == 8) {
-			// 	var contactId = contact.GetFixtureA().GetUserData().id;
-			// 	if (!contact.GetFixtureB().GetUserData().contacts) contact.GetFixtureB().GetUserData().fcontacts = [];
-			// 	var index = contact.GetFixtureB().GetUserData().fcontacts.indexOf(contactId);
-			// 	if (index >= 0) {
-			// 		contact.GetFixtureB().GetUserData().fcontacts.splice(index, 1);
-			// 		if (contact.GetFixtureB().GetUserData().fcontacts.length == 0) {
-			// 			contact.GetFixtureB().GetUserData().wheely = true;
-			// 		}
-			// 	}
-			// }
 		};
 		this.world.SetContactListener(listener);
 	},
@@ -129,14 +135,14 @@ var PhysicsEngine = Class.extend({
 			var fxtr = body.CreateFixture(fixture);
 			fxtr.SetUserData(fOptions.userdata);
 		}
-
+		this.bodyCache.push(body);
 		return body;
 	},
 
 	makeBike: function(pos, tracknum) {
 		gPhysicsEngine.bodies.bike.base = gPhysicsEngine.makeBikeBody(pos, tracknum);
-		gPhysicsEngine.bodies.bike.fwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'front', 0.5, 8, 8);
-		gPhysicsEngine.bodies.bike.rwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'back', 0.5, 7, 7);
+		gPhysicsEngine.bodies.bike.fwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'front', 0.5, 8, 8, 1.5);
+		gPhysicsEngine.bodies.bike.rwheel = gPhysicsEngine.makeWheel(pos, tracknum, 'back', 0.5, 7, 7, -1.5);
 
 		var fwheelJointDef = new b2RevoluteJointDef();
 		fwheelJointDef.bodyA = gPhysicsEngine.bodies.bike.fwheel;
@@ -157,8 +163,8 @@ var PhysicsEngine = Class.extend({
 		rwheelJointDef.enableMotor = true;
 		gPhysicsEngine.bodies.bike.rjoint = gPhysicsEngine.world.CreateJoint(rwheelJointDef);
 	},
-	makeWheel: function(pos, tracknum, name, rest, id, index) {
-		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+	makeWheel: function(pos, tracknum, name, rest, id, index, offsetx) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum) - 2;
 		var wheel = gPhysicsEngine.makeBody({
 			type: 'dynamic',
 			pos: {x: pos, y: yoffset},
@@ -180,7 +186,7 @@ var PhysicsEngine = Class.extend({
 		return wheel;
 	},
 	makeBikeBody: function(pos, tracknum) {
-		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum) - 2;
 		var body = gPhysicsEngine.makeBody({
 			type: 'dynamic',
 			pos: {x: pos, y: yoffset},

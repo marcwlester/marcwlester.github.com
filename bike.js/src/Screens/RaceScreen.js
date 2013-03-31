@@ -13,9 +13,6 @@ var RaceScreen = Screen.extend({
 
 	MAX_DRIVE: 28,
 	MAX_OVERDRIVE: 36,
-	motorSpeed: 0,
-	motorOn: false,
-	motorStep: 0.05,
 	torqueStep: 25,
 	torqueValue: 0,
 	minTorque: 600,
@@ -25,9 +22,7 @@ var RaceScreen = Screen.extend({
 	finishTime: 0,
 	endPos: 0,
 
-	wheelyForce: 0,
 
-	rotationCounter: 0,
 	rotationDirection: 0,
 	lastRotation: 0,
 	numFlips: 0,
@@ -62,12 +57,10 @@ var RaceScreen = Screen.extend({
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
 		if (gInputEngine.action('drive')) {
 			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.minTorque);
-			this.motorSpeed = 200;//this.MAX_DRIVE;
 			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_DRIVE);
 		} else if (gInputEngine.action('over-drive')) {
 			if (this.boostCount > 0) {
 				this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.maxTorque);
-				this.motorSpeed = 800;//this.MAX_OVERDRIVE;
 				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_OVERDRIVE);
 				this.boostCount -= 1;
 			}
@@ -101,11 +94,6 @@ var RaceScreen = Screen.extend({
 		} else {
 			if (this.startRotation != null) {
 				var rotations = Math.abs(gPhysicsEngine.bodies.bike.base.GetAngle() - (this.startRotation));
-				console.log(":"+this.startRotation);
-				console.log("::"+this.startRotation % (Math.PI * 2));
-				//console.log(":"+gPhysicsEngine.bodies.bike.base.GetAngle());
-				//console.log(rotations);
-				//console.log(":::"+rotations / (Math.PI * 2));
 				var flips = Math.round(rotations / (Math.PI * 2));
 
 				this.numFlips += flips
@@ -118,10 +106,8 @@ var RaceScreen = Screen.extend({
 			this.startRotation = null;
 		}
 		
-		//gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.torqueValue);
 		gPhysicsEngine.bodies.bike.rjoint.SetMaxMotorTorque(this.torqueValue);
 
-		//jQuery('#rotation').html(gPhysicsEngine.bodies.bike.base.GetAngle() % (Math.PI * 2));
 
 		this.clearScreen();
 
@@ -192,7 +178,14 @@ var RaceScreen = Screen.extend({
 		xhrGet('assets/tracks/' + track + '.json', function(revent) {
 			var data = this.response;
 			var tdata = JSON.parse(data);
+			gBikeGame.screens['race'].rotationCount = 0;
+			gBikeGame.screens['race'].rotationDirection = 0;
+			gBikeGame.screens['race'].lastRotation = 0;
+			gBikeGame.screens['race'].startRotation = null;
+			gBikeGame.screens['race'].finishTime = 0;
+			gRenderEngine.resetRenderer();
 			gPhysicsEngine.init();
+			gPhysicsEngine.clearBodies();
 			gPhysicsEngine.makeTrack(tdata.end * 2, 1);
 			gPhysicsEngine.makeBike(5, 1);
 			gBikeGame.screens['race'].endPos = tdata.end;
@@ -219,10 +212,12 @@ var RaceScreen = Screen.extend({
 				gPhysicsEngine.world.SetDebugDraw(self.debugDraw);
 			}
 			//console.log(gPhysicsEngine.world);
+			jQuery('#starter').html('3');
+			jQuery('#starter').show();
 			setTimeout(function() { jQuery('#starter').html('2'); }, 1000);
 			setTimeout(function() { jQuery('#starter').html('1'); }, 2000);
 			setTimeout(function() { jQuery('#starter').html('GO!'); }, 3000);
-			setTimeout(function() { jQuery('#starter').html(''); }, 4000);
+			setTimeout(function() { jQuery('#starter').html(''); jQuery('#starter').hide(); }, 4000);
 
 			setTimeout(function() { 
 				gPhysicsEngine.destroyStarter(); 
