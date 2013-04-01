@@ -183,6 +183,7 @@ var RaceScreen = Screen.extend({
 			gBikeGame.screens['race'].lastRotation = 0;
 			gBikeGame.screens['race'].startRotation = null;
 			gBikeGame.screens['race'].finishTime = 0;
+			gBikeGame.screens['race'].boostCount = 0
 			gRenderEngine.resetRenderer();
 			gPhysicsEngine.init();
 			gPhysicsEngine.clearBodies();

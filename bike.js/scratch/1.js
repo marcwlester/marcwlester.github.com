@@ -23,7 +23,7 @@ var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 var update_frequecy = 1/60;
 
-var gravity = new b2Vec2(0,9.8);
+var gravity = new b2Vec2(0,16.5);
 var world = new b2World(gravity,true);
 var input = new THREEx.KeyboardState();
 
@@ -363,57 +363,70 @@ var ramp3 = makeBodyEx(world, {
 	}],
 });
 
-var ramp5 = makeBodyEx(world, {
+// var ramp5 = makeBodyEx(world, {
+// 	type: 'static',
+// 	pos: { x: 60, y: 19.3 },
+// 	fixtures: [{
+// 		shape: 'block',
+// 		pos: { x: 0, y: -1 },
+// 		width: 6,
+// 		height: 0.6,
+// 		rotation: -Math.PI / 4,
+// 		userdata: { id: 99 }
+// 	},{
+// 		shape: 'block',
+// 		pos: {x: 3.4, y: -3.0},
+// 		width: 3,
+// 		height: 0.6,
+// 		userdata: {id: 98}
+// 	},{
+// 		shape: 'block',
+// 		pos: {x: 6.5, y: -4.9},
+// 		width: 6,
+// 		height: 0.6,
+// 		rotation: -Math.PI / 4,
+// 		userdata: { id: 97 }
+// 	}, {
+// 		shape: 'block',
+// 		pos: {x: 10.4, y: -6.9},
+// 		width: 4,
+// 		height: 0.6,
+// 		userdata: {id: 96}
+// 	}, {
+// 		shape: 'block',
+// 		pos: {x: 14.8, y: -5.4},
+// 		width: 6,
+// 		height: 0.6,
+// 		rotation: Math.PI / 6,
+// 		userdata: {id: 95}
+// 	},{
+// 		shape: 'block',
+// 		pos: {x: 19.5, y: -3.9},
+// 		width: 4,
+// 		height: 0.6,
+// 		userdata: {id: 94}
+// 	},{
+// 		shape: 'block',
+// 		pos: {x: 25.4, y: -1.6},
+// 		width: 9.2,
+// 		height: 0.6,
+// 		rotation: Math.PI / 6,
+// 		userdata: {id: 93}
+// 	}
+// 	]
+// });
+
+var ramp6 = makeBodyEx(world, {
 	type: 'static',
 	pos: { x: 60, y: 19.3 },
 	fixtures: [{
 		shape: 'block',
-		pos: { x: 0, y: -1 },
+		pos: { x: 0, y: 0 },
 		width: 6,
 		height: 0.6,
-		rotation: -Math.PI / 4,
+		rotation: -Math.PI / 6,
 		userdata: { id: 99 }
-	},{
-		shape: 'block',
-		pos: {x: 3.4, y: -3.0},
-		width: 3,
-		height: 0.6,
-		userdata: {id: 98}
-	},{
-		shape: 'block',
-		pos: {x: 6.5, y: -4.9},
-		width: 6,
-		height: 0.6,
-		rotation: -Math.PI / 4,
-		userdata: { id: 97 }
-	}, {
-		shape: 'block',
-		pos: {x: 10.4, y: -6.9},
-		width: 4,
-		height: 0.6,
-		userdata: {id: 96}
-	}, {
-		shape: 'block',
-		pos: {x: 14.8, y: -5.4},
-		width: 6,
-		height: 0.6,
-		rotation: Math.PI / 6,
-		userdata: {id: 95}
-	},{
-		shape: 'block',
-		pos: {x: 19.5, y: -3.9},
-		width: 4,
-		height: 0.6,
-		userdata: {id: 94}
-	},{
-		shape: 'block',
-		pos: {x: 25.4, y: -1.6},
-		width: 9.2,
-		height: 0.6,
-		rotation: Math.PI / 6,
-		userdata: {id: 93}
-	}
-	]
+	}]
 });
 
 /*
@@ -627,6 +640,7 @@ var bg_offsets = [0, background_img.width, background_img.width * 2, background_
 var bg_offset = 0;
 var motor_speed = 0;
 var motor_on = false;
+var torqueValue = 0;
 
 function render()
 {
@@ -638,42 +652,53 @@ function render()
 	
 	//rwheel.GetFixtureList().SetDensity(5);
 	//fwheel.GetFixtureList().SetDensity(5);
-	motor_on = false;
-	if (!bike_in_air) {
-		if (input.pressed('k')) {
-			if (base.GetLinearVelocity().x < MAX_SPEED) {
-				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				motor_speed = Math.min(motor_speed + 0.05, 20);
-				rwheelJoint.SetMotorSpeed(-motor_speed);
+	// motor_on = false;
+	// if (!bike_in_air) {
+	// 	if (input.pressed('k')) {
+	// 		if (base.GetLinearVelocity().x < MAX_SPEED) {
+	// 			//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
+	// 			motor_speed = Math.min(motor_speed + 0.05, 20);
+	// 			rwheelJoint.SetMotorSpeed(-motor_speed);
 				
-				motor_on = true;
-			}
-			rwheelJoint.SetMaxMotorTorque(200);
+	// 			motor_on = true;
+	// 		}
+	// 		rwheelJoint.SetMaxMotorTorque(200);
 			
-		}
-		else if (input.pressed('l')) {
-			if (base.GetLinearVelocity().x < MAX_TURBO) {
-				motor_speed += Math.min(motor_speed + 0.05, 20);
-				//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
-				rwheelJoint.SetMotorSpeed(-motor_speed);
+	// 	}
+	// 	else if (input.pressed('l')) {
+	// 		if (base.GetLinearVelocity().x < MAX_TURBO) {
+	// 			motor_speed += Math.min(motor_speed + 0.05, 20);
+	// 			//base.ApplyImpulse(new b2Vec2(10,0), base.GetWorldCenter());
+	// 			rwheelJoint.SetMotorSpeed(-motor_speed);
 				
-				motor_on = true;
-			}
-			rwheelJoint.SetMaxMotorTorque(800);
+	// 			motor_on = true;
+	// 		}
+	// 		rwheelJoint.SetMaxMotorTorque(800);
 			
-		}
-		else if (input.pressed('space')) {
-			//base.ApplyImpulse(new b2Vec2(50,0), base.GetWorldCenter());
-			//base.SetAngle(0.1);
-		}
-	} else {
-		console.log('air time!');
+	// 	}
+	// 	else if (input.pressed('space')) {
+	// 		//base.ApplyImpulse(new b2Vec2(50,0), base.GetWorldCenter());
+	// 		//base.SetAngle(0.1);
+	// 	}
+	// } else {
+	// 	console.log('air time!');
+	// }
+	// if (!motor_on) {
+	// 	motor_speed -= Math.max(motor_speed - 0.05, 0);
+	// 	rwheelJoint.SetMotorSpeed(motor_speed);
+	// 	rwheelJoint.SetMaxMotorTorque(200);
+	// }
+
+	rwheelJoint.SetMotorSpeed(0);
+	if (input.pressed('k')) {
+		torqueValue = Math.min(torqueValue + 25, 600);
+		rwheelJoint.SetMotorSpeed(-28);
+	} else if (input.pressed('l')) {
+		torqueValue = Math.min(torqueValue + 25, 800);
+		rwheelJoint.SetMotorSpeed(-36);
 	}
-	if (!motor_on) {
-		motor_speed -= Math.max(motor_speed - 0.05, 0);
-		rwheelJoint.SetMotorSpeed(motor_speed);
-		rwheelJoint.SetMaxMotorTorque(200);
-	}
+
+	rwheelJoint.SetMaxMotorTorque(torqueValue);
 
 	if (input.pressed('a')) {
 		//if (base.GetAngle() % (Math.PI * 2) > MIN_ANGLE) {
@@ -863,7 +888,7 @@ function render()
 }
 
 debugDraw.SetSprite(ctx);
-debugDraw.SetDrawScale(20);
+debugDraw.SetDrawScale(10);
 debugDraw.SetFillAlpha(0.3);
 debugDraw.SetLineThickness(1.0);
 debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
