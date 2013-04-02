@@ -213,6 +213,7 @@ var RaceScreen = Screen.extend({
 				gPhysicsEngine.world.SetDebugDraw(self.debugDraw);
 			}
 			//console.log(gPhysicsEngine.world);
+			
 			jQuery('#starter').html('3');
 			jQuery('#starter').show();
 			setTimeout(function() { jQuery('#starter').html('2'); }, 1000);
@@ -229,6 +230,16 @@ var RaceScreen = Screen.extend({
 
 			callback();
 		});
+	},
+
+	show: function() {
+		this.parent();
+		gSM.playSound('assets/audio/track.mp3', {looping: true});
+	},
+
+	hide: function() {
+		this.parent();
+		gSM.stopAll();
 	}
 });
 

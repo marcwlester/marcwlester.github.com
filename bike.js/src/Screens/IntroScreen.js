@@ -11,6 +11,16 @@ var IntroScreen = Screen.extend({
 	buttonCooldownMax: 50,
 	buttonCooldown: 0,
 
+	show: function() {
+		this.parent();
+		gSM.playSound('assets/audio/intro.mp3', {looping: true});
+	},
+
+	hide: function() {
+		this.parent();
+		gSM.stopAll();
+	},
+
 	render: function(dt) {
 		//console.log(gInputEngine);
 		// if (gInputEngine.action('select')) {

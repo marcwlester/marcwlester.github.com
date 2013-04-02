@@ -15,14 +15,29 @@ var AssetLoader = Class.extend({
 		for (var i = 0; i < this.numAssets; i++) {
 			var name = manifest[i].name;
 			var src = manifest[i].src;
+			var type = manifest[i].type;
 
-			this.assets[name] = new Image();
-			this.assets[name].onload = gAssetLoader.imageOnload;
-			this.assets[name].src = src;
+			if (type == 'img') {
+				this.assets[name] = new Image();
+				this.assets[name].onload = gAssetLoader.imageOnload;
+				this.assets[name].src = src;
+			}
+
+			if (type == 'audio') {
+				gSM.loadAsync(src, gAssetLoader.audioOnload);
+			}
 		}
 	},
 
 	imageOnload: function() {
+		gAssetLoader.loadedAssets += 1;
+
+		if (gAssetLoader.loadedAssets == gAssetLoader.numAssets) {
+			gAssetLoader.onComplete();
+		}
+	},
+
+	audioOnload: function(s) {
 		gAssetLoader.loadedAssets += 1;
 
 		if (gAssetLoader.loadedAssets == gAssetLoader.numAssets) {

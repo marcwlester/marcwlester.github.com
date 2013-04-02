@@ -56,7 +56,7 @@ var PhysicsEngine = Class.extend({
 	},
 
 	init: function() {
-		gravity = 13.2;
+		gravity = 12.7;
 		this.world = new b2World(new b2Vec2(0,gravity),true);
 
 		var listener = new Box2D.Dynamics.b2ContactListener;
