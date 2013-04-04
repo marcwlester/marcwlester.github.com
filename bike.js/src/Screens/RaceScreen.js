@@ -4,7 +4,8 @@ var RaceScreen = Screen.extend({
 		65: 'lean-back',
 		68: 'lean-forward',
 		75: 'drive',
-		76: 'over-drive'
+		76: 'over-drive',
+		81: 'quit',
 	},
 
 	canvas: null,
@@ -33,6 +34,10 @@ var RaceScreen = Screen.extend({
 	boostLength: 60,  //60 ticks a second
 	maxBoostCount: 5 * 60,
 
+	motorSoundOn: false,
+	menuOpen: false,
+	menuCooldown: 0,
+
 
 
 	init: function(id) {
@@ -53,17 +58,48 @@ var RaceScreen = Screen.extend({
 	render: function(dt) {
 		//if (this.startTime == 0) this.torqueStep = 10;
 		//else this.torqueStep = 2;
+		if (gInputEngine.action('quit') && this.menuCooldown <= 0) {
+			if (!this.menuOpen) {
+				jQuery('#race-menu').show();
+				this.menuOpen = true;
+			} else {
+				jQuery('#race-menu').hide();
+				this.menuOpen = false;
+			}
+			this.menuCooldown = 30;
+		}
+		this.menuCooldown = Math.max(this.menuCooldown - 1, 0);
+		if (this.menuOpen) return;
+
 		var inAir = gPhysicsEngine.bodies.bike.rwheel.GetFixtureList().GetUserData().inAir;
+		var moving = false;
 		gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(0);
 		if (gInputEngine.action('drive')) {
+			// if (!this.motorSoundOn) {
+			// 	gSM.playPlayerSound('assets/audio/motor2.wav', {looping: true, volumn: 0.5});
+			// 	this.motorSoundOn = true;
+			// }
+			moving = true;
 			this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.minTorque);
 			gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_DRIVE);
+
 		} else if (gInputEngine.action('over-drive')) {
 			if (this.boostCount > 0) {
+				// if (!this.motorSoundOn) {
+				// 	gSM.playPlayerSound('assets/audio/motor2.wav', {looping: true, volumn: 0.5});
+				// 	this.motorSoundOn = true;
+				// }
 				this.torqueValue = Math.min(this.torqueValue + this.torqueStep, this.maxTorque);
 				gPhysicsEngine.bodies.bike.rjoint.SetMotorSpeed(-this.MAX_OVERDRIVE);
 				this.boostCount -= 1;
+				moving = true;
 			}
+		}
+		if (!moving) {
+			// if (this.motorSoundOn) {
+			// 	this.motorSoundOn = false;
+			// 	gSM.stopPlayer();
+			// }
 		}
 
 		if (gInputEngine.action('lean-back')) {
@@ -234,7 +270,10 @@ var RaceScreen = Screen.extend({
 
 	show: function() {
 		this.parent();
-		gSM.playSound('assets/audio/track.mp3', {looping: true});
+		gSM.playSound('assets/audio/track.mp3', {looping: true, volume: 0.0});
+		this.menuOpen = false;
+		this.menuCooldown = 0;
+		jQuery('#race-menu').hide();
 	},
 
 	hide: function() {

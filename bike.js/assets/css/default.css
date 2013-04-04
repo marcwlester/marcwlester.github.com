@@ -76,7 +76,7 @@ body {
 div.title {
 	text-align: center;
 }
-#finish {
+#finish, #race-menu {
 	width: 20%;
 	height: 300px;
 	position: absolute;

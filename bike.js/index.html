@@ -33,6 +33,10 @@
 				<h2><span id='finish-time'></span></h2>
 				<button class="btn btn-large btn-block btn-primary" type="button" onclick="gBikeGame.backToMenu()">Back to Menu</button>
 			</div>
+			<div id='race-menu'>
+				<button class="btn btn-large btn-block btn-primary" type="button" onclick="gBikeGame.toggleSound()">Toggle Sound</button>
+				<button class="btn btn-large btn-block btn-primary" type="button" onclick="gBikeGame.backToMenu()">Back to Menu</button>
+			</div>
 			<div id='dashboard'>
 				<canvas id='rpm-gauge' width="200" height="200"></canvas>
 				<canvas id='speed-gauge' width="200" height="200"></canvas>
@@ -51,6 +55,7 @@
 					<p><b>D</b>: lean forward</p>
 					<p><b>J</b>: accelerate</p>
 					<p><b>K</b>: turbo</p>
+					<p><b>Q</b>: pause/un-pause the game</p>
 					<p>Doing flips in the air and landing them will give you extra <b>NOS</b> power.  Press the <b>K</b> key to use for extra speed.</p>
 				</div>
 				<div class='main-menu'>

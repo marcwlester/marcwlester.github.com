@@ -59,7 +59,10 @@ var BikeGame = Class.extend({
 	},
 	backToMenu: function() {
 		this.setScreen(this.screens['intro']);
-	}
+	},
+	toggleSound: function() {
+		gSM.togglemute();
+	},
 });
 
 var gBikeGame = new BikeGame();

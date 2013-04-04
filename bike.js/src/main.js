@@ -10,7 +10,9 @@ var manifest = [
 { type: 'img', src: 'assets/img/gate-up.png', name: 'gate-up'},
 { type: 'img', src: 'assets/img/gate-down.png', name: 'gate-down'},
 { type: 'audio', src: 'assets/audio/intro.mp3', name: 'intro-music'},
-{ type: 'audio', src: 'assets/audio/track.mp3', name: 'track-music'}
+{ type: 'audio', src: 'assets/audio/track.mp3', name: 'track-music'},
+{ type: 'audio', src: 'assets/audio/motor2.wav', name: 'drive'},
+{ type: 'audio', src: 'assets/audio/motor3.wav', name: 'overdrive'}
 ];
 
 jQuery(document).ready(function() {
