@@ -356,6 +356,111 @@ var PhysicsEngine = Class.extend({
 	},
 	makeRamp4: function(pos, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var ramp4 = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				pos: { x: 0, y: -0.8 },
+				width: 5,
+				height: 0.6,
+				rotation: -Math.PI / 6,
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1400
+				}
+			},{
+				shape: 'block',
+				pos: {x: 2.6, y: -0.8},
+				width: 3,
+				height: 0.6,
+				rotation: Math.PI / 3,
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1401
+				}
+			}],
+			userdata: {
+				name: 'ramp4'
+			}
+		});
+		gPhysicsEngine.bodies['ramps'].push(ramp4);
+	},
+	makeRamp5: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var ramp5 = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				pos: {x: 2.6, y: -0.8},
+				width: 5,
+				height: 0.6,
+				rotation: Math.PI / 6,
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1400
+				}
+			},{
+				shape: 'block',
+				pos: {x: 0, y: -0.8},
+				width: 3,
+				height: 0.6,
+				rotation: -Math.PI / 3,
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1401
+				}
+			}],
+			userdata: {
+				name: 'ramp5'
+			}
+		});
+		gPhysicsEngine.bodies['ramps'].push(ramp5);
+	},
+	makeRamp6: function(pos, tracknum) {
+		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);
+		var ramp5 = gPhysicsEngine.makeBody({
+			type: 'static',
+			pos: {x: pos, y: yoffset},
+			fixtures: [{
+				shape: 'block',
+				pos: {x: 0, y: -0.8},
+				width: 5,
+				height: 0.6,
+				rotation: -Math.PI / 6,
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1500
+				}
+			},{
+				shape: 'block',
+				pos: {x: 4, y: -0.8},
+				width: 5,
+				height: 0.6,
+				rotation: Math.PI / 6,
+				groupIndex: 2,
+				friction: 1,
+				density: 0,
+				userdata: {
+					id: 1501
+				}
+			}],
+			userdata: {
+				name: 'ramp6'
+			}
+		});
+		gPhysicsEngine.bodies['ramps'].push(ramp5);
 	},
 	makeTrack: function(size, tracknum) {
 		yoffset = gPhysicsEngine.getTrackYOffset(tracknum);

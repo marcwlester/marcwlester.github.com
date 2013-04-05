@@ -4,6 +4,9 @@ var manifest = [
 { type: 'img', src: 'assets/img/ramp1.png', name: 'ramp1'},
 { type: 'img', src: 'assets/img/ramp2.png', name: 'ramp2'},
 { type: 'img', src: 'assets/img/ramp3.png', name: 'ramp3'},
+{ type: 'img', src: 'assets/img/ramp4.png', name: 'ramp4'},
+{ type: 'img', src: 'assets/img/ramp5.png', name: 'ramp5'},
+{ type: 'img', src: 'assets/img/ramp6.png', name: 'ramp6'},
 { type: 'img', src: 'assets/img/wheel.png', name: 'wheel'},
 { type: 'img', src: 'assets/img/helmet-red.png', name: 'helmet-red'},
 { type: 'img', src: 'assets/img/finish.png', name: 'finish'},
@@ -16,9 +19,16 @@ var manifest = [
 ];
 
 jQuery(document).ready(function() {
+	jQuery('#screen-load').show();
+	jQuery('#assets-loaded').html("0");
+	jQuery('#assets-total').html(manifest.length);
 	gSM.create();
 	gAssetLoader.loadManifest(manifest, function() { 
+		jQuery('#screen-load').hide();
 		gBikeGame.run();
+	}, function() {
+		jQuery('#assets-loaded').html(gAssetLoader.loadedAssets);
+		jQuery('#asset-bar').css('width', ((gAssetLoader.loadedAssets / manifest.length) * 100) + "%")
 	});
 	//gBikeGame.run();
 });

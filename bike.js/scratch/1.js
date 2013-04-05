@@ -23,7 +23,7 @@ var b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 var update_frequecy = 1/60;
 
-var gravity = new b2Vec2(0,16.5);
+var gravity = new b2Vec2(0,12.7);
 var world = new b2World(gravity,true);
 var input = new THREEx.KeyboardState();
 
@@ -418,20 +418,57 @@ var ramp3 = makeBodyEx(world, {
 
 var ramp6 = makeBodyEx(world, {
 	type: 'static',
-	pos: { x: 60, y: 19.3 },
+	pos: { x: 5, y: 19.3 },
 	fixtures: [{
 		shape: 'block',
-		pos: { x: 0, y: 0 },
-		width: 6,
+		pos: {x: 0, y: -0.8},
+		width: 5,
 		height: 0.6,
 		rotation: -Math.PI / 6,
+		groupIndex: 2,
+		friction: 1,
+		density: 0,
+		userdata: {
+			id: 1400
+		}
+	},{
+		shape: 'block',
+		pos: {x: 4, y: -0.8},
+		width: 5,
+		height: 0.6,
+		rotation: Math.PI / 6,
+		groupIndex: 2,
+		friction: 1,
+		density: 0,
+		userdata: {
+			id: 1401
+		}
+	}],
+});
+
+var ramp7 = makeBodyEx(world, {
+	type: 'static',
+	pos: { x: 10, y: 19.3 },
+	fixtures: [{
+		shape: 'block',
+		pos: { x: 2.6, y: 0 },
+		width: 5,
+		height: 0.6,
+		rotation: Math.PI / 6,
 		userdata: { id: 99 }
+	},{
+		shape: 'block',
+		pos: {x: 0, y: 0},
+		width: 3,
+		height: 0.6,
+		rotation: -Math.PI / 3,
+		userdata: {id: 98 }
 	}]
 });
 
 /*
 var ramp3a = makeBody(world, {
-	shape: 'block',
+	shape: 'block'
 	type: 'static',
 	x: 30 + 40,
 	y: 19.2,
@@ -511,7 +548,7 @@ var base = makeBodyEx(world, {
 		shape: 'circle',
 		pos: {x: 0.5, y: -3},
 		radius: 0.75,
-		density: 5,
+		density: 1,
 		groupIndex: 4,
 		userdata: {
 			name: 'head',
@@ -528,9 +565,9 @@ var rwheel = makeBodyEx(world, {
 		shape: 'circle',
 		pos: {x: 0, y: 0},
 		radius: 1,
-		density: 5,
+		density: 2,
 		friction: 30,
-		restitution: 0.2,
+		restitution: 0.4,
 		groupIndex: 7,
 		userdata: {
 			name: 'rear wheel',
@@ -546,9 +583,9 @@ var fwheel = makeBodyEx(world, {
 		shape: 'circle',
 		pos: {x: 0, y: 0},
 		radius: 1,
-		density: 5,
+		density: 1,
 		friction: 30,
-		restitution: 0.1,
+		restitution: 0.3,
 		groupIndex: 8,
 		userdata: {
 			name: 'front wheel',
@@ -888,7 +925,7 @@ function render()
 }
 
 debugDraw.SetSprite(ctx);
-debugDraw.SetDrawScale(10);
+debugDraw.SetDrawScale(20);
 debugDraw.SetFillAlpha(0.3);
 debugDraw.SetLineThickness(1.0);
 debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);

@@ -5,12 +5,14 @@ var AssetLoader = Class.extend({
 	loadedAssets: 0,
 
 	onComplete: null,
+	onAssetLoaded: null,
 
-	loadManifest: function(manifest, onComplete) {
+	loadManifest: function(manifest, onComplete, onAssetLoaded) {
 		this.manifest = manifest;
 		this.numAssets = manifest.length;
 		this.loadedAssets = 0;
 		this.onComplete = onComplete;
+		this.onAssetLoaded = onAssetLoaded;
 
 		for (var i = 0; i < this.numAssets; i++) {
 			var name = manifest[i].name;
@@ -31,6 +33,7 @@ var AssetLoader = Class.extend({
 
 	imageOnload: function() {
 		gAssetLoader.loadedAssets += 1;
+		gAssetLoader.onAssetLoaded();
 
 		if (gAssetLoader.loadedAssets == gAssetLoader.numAssets) {
 			gAssetLoader.onComplete();
@@ -39,6 +42,7 @@ var AssetLoader = Class.extend({
 
 	audioOnload: function(s) {
 		gAssetLoader.loadedAssets += 1;
+		gAssetLoader.onAssetLoaded();
 
 		if (gAssetLoader.loadedAssets == gAssetLoader.numAssets) {
 			gAssetLoader.onComplete();

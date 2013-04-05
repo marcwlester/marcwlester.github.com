@@ -241,6 +241,12 @@ var RaceScreen = Screen.extend({
 					case "ramp4":
 					gPhysicsEngine.makeRamp4(pos, 1);
 					break;
+					case "ramp5":
+					gPhysicsEngine.makeRamp5(pos, 1);
+					break;
+					case "ramp6":
+					gPhysicsEngine.makeRamp6(pos, 1);
+					break;
 				}
 			}
 			gPhysicsEngine.makeStarter(8, 1);

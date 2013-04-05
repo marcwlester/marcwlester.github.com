@@ -2,13 +2,7 @@
 	"name": "track 3",
 	"end": 400,
 	"track": [
-		{"pos": 40,"type": "ramp3"},
-		{"pos": 110,"type": "ramp3"},
-		{"pos": 120,"type": "ramp3"},
-		{"pos": 130,"type": "ramp3"},
-		{"pos": 140,"type": "ramp3"},
-		{"pos": 150,"type": "ramp3"},
-		{"pos": 200,"type": "ramp3"},
-		{"pos": 300,"type": "ramp3"}
+		{"pos": 70,"type": "ramp6"},
+		{"pos": 100,"type": "ramp6"}
 	]
 }
