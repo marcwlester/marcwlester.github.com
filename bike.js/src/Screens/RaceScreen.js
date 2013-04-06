@@ -1,3 +1,10 @@
+/**
+ * @date 	April 2013
+ * @author	Marc Lester <marc.w.lester@gmail.com>
+ * @licence	This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+ *			To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ */
+
 var RaceScreen = Screen.extend({
 
 	keyBindings: {
@@ -250,10 +257,10 @@ var RaceScreen = Screen.extend({
 				}
 			}
 			gPhysicsEngine.makeStarter(8, 1);
-			if (self.debugDraw !== null) {
-				//console.log(self.debugDraw);
-				gPhysicsEngine.world.SetDebugDraw(self.debugDraw);
-			}
+			// if (self.debugDraw !== null) {
+			// 	//console.log(self.debugDraw);
+			// 	gPhysicsEngine.world.SetDebugDraw(self.debugDraw);
+			// }
 			//console.log(gPhysicsEngine.world);
 			
 			jQuery('#starter').html('3');

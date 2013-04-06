@@ -1,3 +1,10 @@
+/**
+ * @date 	April 2013
+ * @author	Marc Lester <marc.w.lester@gmail.com>
+ * @licence	This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+ *			To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/.
+ */
+ 
 var BikeGame = Class.extend({
 	_screen: null,
 	screens: {},
