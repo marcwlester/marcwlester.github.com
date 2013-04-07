@@ -13,6 +13,7 @@ body {
 	display: none;
 	/*background-color: black;*/
 	outline: none !important;
+	clear:both;
 }
 
 #screen-race {

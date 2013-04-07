@@ -6,7 +6,8 @@
  */
 
 var manifest = [
-{ type: 'img', src: 'assets/img/background.png', name: 'background'},
+{ type: 'img', src: 'assets/img/title.png', name: 'title'},
+{ type: 'img', src: 'assets/img/background2.png', name: 'background'},
 { type: 'img', src: 'assets/img/bike-body-red.png', name: 'bike-body-red'},
 { type: 'img', src: 'assets/img/ramp1.png', name: 'ramp1'},
 { type: 'img', src: 'assets/img/ramp2.png', name: 'ramp2'},
