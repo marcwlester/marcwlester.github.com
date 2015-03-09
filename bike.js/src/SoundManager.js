@@ -14,6 +14,7 @@ SoundManager = Class.extend({
 
 	//----------------------------
 	create: function () {
+		return;
 		try {
 			gSM._context = new webkitAudioContext();
 		} catch (e) {
@@ -131,6 +132,7 @@ SoundManager = Class.extend({
 	//               }
 	//----------------------------
 	playSound: function (path, settings) {
+		return;
 		// Check if the Sound Manager has been enabled,
 		// return false if not.
 		if (!gSM.enabled) return false;
@@ -189,6 +191,7 @@ SoundManager = Class.extend({
 	},
 
 	initBgMusic: function(path, settings) {
+		return;
 		// Check if the Sound Manager has been enabled,
 		// return false if not.
 		if (!gSM.enabled) return false;
@@ -236,6 +239,7 @@ SoundManager = Class.extend({
 	},
 
 	initMotorSound: function(path, settings) {
+		return;
 		// Check if the Sound Manager has been enabled,
 		// return false if not.
 		if (!gSM.enabled) return false;
@@ -283,6 +287,7 @@ SoundManager = Class.extend({
 	},
 
 	playPlayerSound: function (path, settings) {
+		return;
 		// Check if the Sound Manager has been enabled,
 		// return false if not.
 		if (!gSM.enabled) return false;
